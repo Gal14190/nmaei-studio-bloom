@@ -46,7 +46,7 @@ const Header = () => {
           <nav className="hidden md:flex items-center space-x-8 rtl:space-x-reverse">
             {menuItems.map(item => <Link key={item.href} to={item.href} className="">
                 {item.label}
-                {isActiveLink(item.href) && <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gold-600 rounded-full"></span>}
+                {isActiveLink(item.href) && <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gold-600 rounded-full my-[51px]"></span>}
               </Link>)}
           </nav>
 
