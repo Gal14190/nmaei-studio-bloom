@@ -41,10 +41,8 @@ const About = () => {
       <section className="pt-24 pb-16 bg-beige-50">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center animate-fade-up">
-            <h1 className="section-title text-gray-900 mb-6">אודות נופר</h1>
-            <p className="body-large text-gray-600 leading-relaxed">
-              אדריכלית ומעצבת פנים עם תשוקה ליצירת מרחבים חמים, פונקציונליים ומעוצבים בקו מינימליסטי נקי
-            </p>
+            <h1 className="section-title text-gray-900 mb-6"> NMAEI</h1>
+            <p className="body-large text-gray-600 leading-relaxed">לראות | להבין | להרגיש </p>
           </div>
         </div>
       </section>
@@ -71,18 +69,18 @@ const About = () => {
 כל פרויקט מתחיל בהקשבה עמוקה ובחיבור אינטואיטיבי ללקוח. עבורי, הלקוח הוא לא משימה לסיום, אלא סיפור שלם שכולל תובנות, רגשות ומשמעות.
 
                 </p>
-                  <p>מתוך ההקשבה הזו נולדת היצירה. אני מתרגמת רגשות, זיכרונות ואנרגיה לתכנון אישי, מדויק ושלם.
-כמו מערכת חכמה שמעבדת נתונים והופכת אותםל ממצאים– כך אני יוצרת חללים שמספרים את הסיפור הפנימי של מי שיחיה בהם.</p>
+                  <p>מתוך ההקשבה נולדת היצירה. אני מתרגמת רגשות, זיכרונות ואנרגיה לתכנון אישי, מדויק ושלם. כמו מערכת חכמה שמעבדת נתונים והופכת אותםל ממצאים– כך אני יוצרת חללים שמספרים את הסיפור הפנימי של מי שיחיה בהם.</p>
                 </div>
               </div>
 
               <div className="border-t border-gray-200 pt-6">
                 <h3 className="text-xl font-medium text-gray-900 mb-3">השכלה מקצועית</h3>
                 <ul className="space-y-2 text-gray-600">
-                  <li>• הנדסאית אדריכלות - מכללה טכנולוגית</li>
-                  <li>• תואר B.Design בעיצוב פנים</li>
-                  <li>• התמחות בעיצוב מינימליסטי ובר-קיימא</li>
+                  <li>• הנדסאית אדריכלות - מכללת שנקר</li>
+                  <li>• תואר B.Design בעיצוב פנים - מכללת שנקר</li>
                   <li>• 3 שנות ניסיון מקצועי</li>
+                  <li>
+                </li>
                 </ul>
               </div>
             </div>
