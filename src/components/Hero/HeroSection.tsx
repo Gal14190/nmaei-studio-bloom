@@ -17,7 +17,7 @@ const HeroSection = () => {
           {/* Logo/Brand */}
           <div className="mb-8">
             <img alt="NMAEI Logo" className="w-24 h-24 md:w-32 md:h-32 mx-auto mb-6 animate-scale-in object-cover" src="/lovable-uploads/f911b76f-cd03-4ecc-ace0-40a934fa63db.png" />
-            <h1 className="hero-text text-white text-shadow-lg mb-2 text-5xl">N M A E I</h1>
+            <h1 className="hero-text text-white text-shadow-lg mb-2 text-7xl">N M A E I</h1>
             <p className="text-lg md:text-xl tracking-wide text-warm-50">Architecture | Interior Design</p>
           </div>
 
