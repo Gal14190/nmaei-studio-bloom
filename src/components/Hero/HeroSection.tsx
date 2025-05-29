@@ -16,7 +16,7 @@ const HeroSection = () => {
         <div className="animate-fade-up">
           {/* Logo/Brand */}
           <div className="mb-8">
-            <img alt="NMAEI Logo" className="w-24 h-24 md:w-32 md:h-32 mx-auto mb-6 animate-scale-in object-cover" src="/lovable-uploads/93f5e4f8-b76d-4ff5-96b6-fc3ab72405d1.png" />
+            <img alt="NMAEI Logo" className="w-24 h-24 md:w-32 md:h-32 mx-auto mb-6 animate-scale-in object-cover" src="/lovable-uploads/be98e403-1b51-4443-9e11-da5091ce28d3.png" />
             <h1 className="hero-text text-white text-shadow-lg mb-2">N M A E I</h1>
             <p className="text-lg md:text-xl tracking-wide text-warm-50">Architecture | Interior Design</p>
           </div>
