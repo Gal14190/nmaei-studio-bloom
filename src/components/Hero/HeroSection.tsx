@@ -30,9 +30,9 @@ const HeroSection = () => {
           </div>
 
           {/* Call to Action */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in" style={{
+          <div style={{
           animationDelay: '0.6s'
-        }}>
+        }} className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in rounded-lg px-0 py-[9px] mx-[4px] bg-[#00000e]/0">
             <Button asChild size="lg" className="bg-gold-600 hover:bg-gold-700 text-white font-medium">
               <Link to="/projects" className="flex items-center gap-2">
                 צפה בפרויקטים
@@ -40,7 +40,7 @@ const HeroSection = () => {
               </Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-gray-900">
-              <Link to="/contact">
+              <Link to="/contact" className="">
                 צור קשר
               </Link>
             </Button>
