@@ -26,7 +26,7 @@ const HeroSection = () => {
           animationDelay: '0.3s'
         }}>
             <h2 className="text-xl md:text-2xl lg:text-3xl text-white font-light leading-relaxed text-shadow mb-6">לראות | להבין | להרגיש</h2>
-            <p className="body-large text-white/90 max-w-2xl mx-auto text-shadow">הדיוק בין תכנון שמתרגם חלומות ומדבר את השטח</p>
+            <p className="body-large text-white/90 max-w-2xl mx-auto text-shadow">תכנון שמתרגם חלומות ומדבר עם השטח</p>
           </div>
 
           {/* Call to Action */}
