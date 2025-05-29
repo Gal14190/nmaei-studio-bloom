@@ -53,7 +53,7 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
-				// Custom color palette
+				// Custom color palette for NMAEI Studio
 				beige: {
 					50: '#faf9f7',
 					100: '#f2f0ec',
@@ -75,8 +75,8 @@ export default {
 					500: '#ccbfad',
 					600: '#b7a590',
 					700: '#9d8870',
-					800: '#8470
-'},
+					800: '#847055',
+					900: '#6b5a45',
 				},
 				gold: {
 					50: '#fffdf7',
