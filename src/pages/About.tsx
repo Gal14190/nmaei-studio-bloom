@@ -1,41 +1,42 @@
-
 import React from 'react';
 import Layout from '@/components/Layout/Layout';
 import { Award, Users, Clock, Heart } from 'lucide-react';
-
 const About = () => {
-  const stats = [
-    { icon: <Award className="w-8 h-8" />, number: '50+', label: 'פרויקטים הושלמו' },
-    { icon: <Users className="w-8 h-8" />, number: '40+', label: 'לקוחות מרוצים' },
-    { icon: <Clock className="w-8 h-8" />, number: '3', label: 'שנות ניסיון' },
-    { icon: <Heart className="w-8 h-8" />, number: '100%', label: 'מחויבות לאיכות' }
-  ];
-
-  const timeline = [
-    {
-      year: '2021',
-      title: 'ההתחלה',
-      description: 'סיום לימודי הנדסאית אדריכלות וכניסה לתחום המקצועי'
-    },
-    {
-      year: '2022',
-      title: 'השכלה נוספת',
-      description: 'השלמת תואר B.Design בעיצוב פנים והתמחות בעיצוב מינימליסטי'
-    },
-    {
-      year: '2023',
-      title: 'ייסוד הסטודיו',
-      description: 'הקמת סטודיו NMAEI ותחילת עבודה עצמאית עם לקוחות פרטיים'
-    },
-    {
-      year: '2024',
-      title: 'צמיחה והתפתחות',
-      description: 'הרחבת הפעילות לפרויקטים מסחריים וצוות מקצועי מורחב'
-    }
-  ];
-
-  return (
-    <Layout>
+  const stats = [{
+    icon: <Award className="w-8 h-8" />,
+    number: '50+',
+    label: 'פרויקטים הושלמו'
+  }, {
+    icon: <Users className="w-8 h-8" />,
+    number: '40+',
+    label: 'לקוחות מרוצים'
+  }, {
+    icon: <Clock className="w-8 h-8" />,
+    number: '3',
+    label: 'שנות ניסיון'
+  }, {
+    icon: <Heart className="w-8 h-8" />,
+    number: '100%',
+    label: 'מחויבות לאיכות'
+  }];
+  const timeline = [{
+    year: '2021',
+    title: 'ההתחלה',
+    description: 'סיום לימודי הנדסאית אדריכלות וכניסה לתחום המקצועי'
+  }, {
+    year: '2022',
+    title: 'השכלה נוספת',
+    description: 'השלמת תואר B.Design בעיצוב פנים והתמחות בעיצוב מינימליסטי'
+  }, {
+    year: '2023',
+    title: 'ייסוד הסטודיו',
+    description: 'הקמת סטודיו NMAEI ותחילת עבודה עצמאית עם לקוחות פרטיים'
+  }, {
+    year: '2024',
+    title: 'צמיחה והתפתחות',
+    description: 'הרחבת הפעילות לפרויקטים מסחריים וצוות מקצועי מורחב'
+  }];
+  return <Layout>
       {/* Hero Section */}
       <section className="pt-24 pb-16 bg-beige-50">
         <div className="container mx-auto px-4">
@@ -55,11 +56,7 @@ const About = () => {
             {/* Image */}
             <div className="animate-fade-in">
               <div className="relative">
-                <img
-                  src="/lovable-uploads/abb71ea3-eb84-4ef8-bc2a-169b6f172cd7.png"
-                  alt="נופר - אדריכלית ומעצבת פנים"
-                  className="w-full rounded-lg shadow-lg"
-                />
+                <img src="/lovable-uploads/abb71ea3-eb84-4ef8-bc2a-169b6f172cd7.png" alt="נופר - אדריכלית ומעצבת פנים" className="w-full rounded-lg shadow-lg" />
                 <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-gold-100 rounded-lg -z-10"></div>
               </div>
             </div>
@@ -69,18 +66,13 @@ const About = () => {
               <div>
                 <h2 className="text-3xl font-light text-gray-900 mb-4">הסיפור שלי</h2>
                 <div className="space-y-4 text-gray-600 leading-relaxed">
-                  <p>
-                    שלום, אני נופר, אדריכלית ומעצבת פנים עם תשוקה עמוקה ליצירת מרחבים שמחברים בין פונקציונליות לאסתטיקה. 
-                    הדרך שלי החלה עם לימודי הנדסאית אדריכלות, והמשיכה עם תואר B.Design בעיצוב פנים.
-                  </p>
-                  <p>
-                    במהלך שלוש שנות הניסיון שלי, פיתחתי גישה ייחודית המשלבת עיצוב מינימליסטי עם חמימות ונוחות. 
-                    אני מאמינה שכל מרחב צריך לספר סיפור ולהעביר רגש, תוך מתן מענה מושלם לצרכים הפרקטיים של המשתמשים.
-                  </p>
-                  <p>
-                    הפילוסופיה המקצועית שלי מבוססת על הבנה עמוקה של הלקוח, תשומת לב לפרטים הקטנים, 
-                    ושימוש בחומרים איכותיים שיעמדו במבחן הזמן.
-                  </p>
+                  <p>שלום, אני נופר, אדריכלית ומעצבת פנים </p>
+                  <p>אדריכלות ועיצוב עבורי בחירה בדרך חיים – דרך שמלווה בתהליך רגשי ועמוק של תרגום חלומות ותחושות לחללים מוחשיים בעולם החומרי.
+כל פרויקט מתחיל בהקשבה עמוקה ובחיבור אינטואיטיבי ללקוח. עבורי, הלקוח הוא לא משימה לסיום, אלא סיפור שלם שכולל תובנות, רגשות ומשמעות.
+
+                </p>
+                  <p>מתוך ההקשבה הזו נולדת היצירה. אני מתרגמת רגשות, זיכרונות ואנרגיה לתכנון אישי, מדויק ושלם.
+כמו מערכת חכמה שמעבדת נתונים והופכת אותםל ממצאים– כך אני יוצרת חללים שמספרים את הסיפור הפנימי של מי שיחיה בהם.</p>
                 </div>
               </div>
 
@@ -102,19 +94,15 @@ const About = () => {
       <section className="py-16 bg-gray-900 text-white">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {stats.map((stat, index) => (
-              <div 
-                key={index} 
-                className="text-center animate-fade-up"
-                style={{animationDelay: `${index * 0.1}s`}}
-              >
+            {stats.map((stat, index) => <div key={index} className="text-center animate-fade-up" style={{
+            animationDelay: `${index * 0.1}s`
+          }}>
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-gold-600 rounded-full mb-4">
                   {stat.icon}
                 </div>
                 <div className="text-3xl font-light text-gold-400 mb-2">{stat.number}</div>
                 <div className="text-gray-300 text-sm">{stat.label}</div>
-              </div>
-            ))}
+              </div>)}
           </div>
         </div>
       </section>
@@ -131,12 +119,9 @@ const About = () => {
             </div>
 
             <div className="space-y-8">
-              {timeline.map((item, index) => (
-                <div 
-                  key={index} 
-                  className="flex flex-col md:flex-row gap-6 animate-fade-up"
-                  style={{animationDelay: `${index * 0.2}s`}}
-                >
+              {timeline.map((item, index) => <div key={index} className="flex flex-col md:flex-row gap-6 animate-fade-up" style={{
+              animationDelay: `${index * 0.2}s`
+            }}>
                   <div className="md:w-24 flex-shrink-0">
                     <div className="inline-block bg-gold-600 text-white px-4 py-2 rounded-full text-sm font-medium">
                       {item.year}
@@ -146,8 +131,7 @@ const About = () => {
                     <h3 className="text-xl font-medium text-gray-900 mb-2">{item.title}</h3>
                     <p className="text-gray-600 leading-relaxed">{item.description}</p>
                   </div>
-                </div>
-              ))}
+                </div>)}
             </div>
           </div>
         </div>
@@ -167,8 +151,6 @@ const About = () => {
           </div>
         </div>
       </section>
-    </Layout>
-  );
+    </Layout>;
 };
-
 export default About;
