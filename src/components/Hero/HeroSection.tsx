@@ -16,7 +16,7 @@ const HeroSection = () => {
         <div className="animate-fade-up">
           {/* Logo/Brand */}
           <div className="mb-8">
-            <img alt="NMAEI Logo" className="w-24 h-24 md:w-32 md:h-32 mx-auto mb-6 animate-scale-in object-cover" src="/lovable-uploads/be98e403-1b51-4443-9e11-da5091ce28d3.png" />
+            <img alt="NMAEI Logo" className="w-24 h-24 md:w-32 md:h-32 mx-auto mb-6 animate-scale-in object-cover" src="/lovable-uploads/a71b058a-7850-4233-841b-281725d3d50d.png" />
             <h1 className="hero-text text-white text-shadow-lg mb-2">N M A E I</h1>
             <p className="text-lg md:text-xl tracking-wide text-warm-50">Architecture | Interior Design</p>
           </div>
@@ -25,12 +25,8 @@ const HeroSection = () => {
           <div className="mb-12 animate-fade-in" style={{
           animationDelay: '0.3s'
         }}>
-            <h2 className="text-xl md:text-2xl lg:text-3xl text-white font-light leading-relaxed text-shadow mb-6">
-              אדריכלות ועיצוב פנים בקו נקי, חם ומדויק
-            </h2>
-            <p className="body-large text-white/90 max-w-2xl mx-auto text-shadow">
-              תכנון חכם. השראה יומיומית.
-            </p>
+            <h2 className="text-xl md:text-2xl lg:text-3xl text-white font-light leading-relaxed text-shadow mb-6">לראות | להבין | להרגיש</h2>
+            <p className="body-large text-white/90 max-w-2xl mx-auto text-shadow">הדיוק בין תכנון שמתרגם חלומות ומדבר את השטח</p>
           </div>
 
           {/* Call to Action */}
