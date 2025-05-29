@@ -2,9 +2,11 @@
 import React, { useState } from 'react';
 import Layout from '@/components/Layout/Layout';
 import { Button } from '@/components/ui/button';
+import { X } from 'lucide-react';
 
 const Projects = () => {
   const [activeFilter, setActiveFilter] = useState('all');
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const categories = [
     { id: 'all', label: 'הכל' },
@@ -21,7 +23,7 @@ const Projects = () => {
       category: 'apartments',
       location: 'תל אביב',
       image: '/lovable-uploads/26882b0c-ca51-42ec-9c11-bf089d9cfc7b.png',
-      description: 'עיצוב נקי ומודרני המשלב פונקציונליות עם אסתטיקה מינימליסטית',
+      description: 'עיצוב נקי ומודרני המשלב פונקציונליות עם אסתטיקה מינימליסטית. הפרויקט כולל עיצוב מחדש מלא של דירת 4 חדרים במרכז תל אביב.',
       materials: 'עץ אלון, שיש לבן, זכוכית',
       year: '2024'
     },
@@ -31,7 +33,7 @@ const Projects = () => {
       category: 'houses',
       location: 'הרצליה',
       image: '/lovable-uploads/7b2d2c09-e0eb-4d31-928f-8332dda0acdc.png',
-      description: 'אדריכלות עכשווית עם חיבור חזק לטבע ולנוף',
+      description: 'אדריכלות עכשווית עם חיבור חזק לטבע ולנוף. תכנון בית פרטי יוקרתי הכולל גינה פרטית ובריכת שחייה.',
       materials: 'בטון חשוף, עץ טיק, אבן טבעית',
       year: '2024'
     },
@@ -41,7 +43,7 @@ const Projects = () => {
       category: 'apartments',
       location: 'רמת גן',
       image: '/lovable-uploads/e0c6aeb2-cfc6-4c92-b675-e0c005c3e481.png',
-      description: 'עיצוב ספא ביתי עם שילוב אבן טבעית ואלמנטים מינימליסטיים',
+      description: 'עיצוב ספא ביתי עם שילוב אבן טבעית ואלמנטים מינימליסטיים. חדר אמבטיה ראשי הכולל אמבטיה עומדת ומקלחת זכוכית.',
       materials: 'אבן טבעית, עץ במבוק, ברונזה',
       year: '2023'
     },
@@ -51,7 +53,7 @@ const Projects = () => {
       category: 'houses',
       location: 'כפר סבא',
       image: '/lovable-uploads/3a5c7c4f-9b3c-4616-a008-11145645b34d.png',
-      description: 'חדר אמבטיה יוקרתי עם אמבט אבן וטקסטורות טבעיות',
+      description: 'חדר אמבטיה יוקרתי עם אמבט אבן וטקסטורות טבעיות. שילוב חכם של תאורה טבעית ומלאכותית.',
       materials: 'שיש, עץ אגוז, פליז',
       year: '2023'
     },
@@ -61,7 +63,7 @@ const Projects = () => {
       category: 'apartments',
       location: 'תל אביב',
       image: '/lovable-uploads/0a85161f-705c-4a04-ad1a-921ed6a25804.png',
-      description: 'סלון מודרני עם פריטי עיצוב ייחודיים ותאורה מותאמת',
+      description: 'סלון מודרני עם פריטי עיצוב ייחודיים ותאורה מותאמת. מרחב פתוח המקשר בין המטבח לסלון.',
       materials: 'עור איטלקי, עץ אלון, מתכת',
       year: '2023'
     },
@@ -71,7 +73,7 @@ const Projects = () => {
       category: 'houses',
       location: 'רעננה',
       image: '/lovable-uploads/27c74a05-6338-4ae2-b8ca-2231ff6e02d2.png',
-      description: 'חדר שינה יוקרתי עם חלונות גדולים ועיצוב אלגנטי',
+      description: 'חדר שינה יוקרתי עם חלונות גדולים ועיצוב אלגנטי. שילוב של חומרים טבעיים עם טכנולוגיה מתקדמת.',
       materials: 'עץ ונגה, בדים טבעיים, זכוכית',
       year: '2023'
     }
@@ -81,13 +83,23 @@ const Projects = () => {
     ? projects 
     : projects.filter(project => project.category === activeFilter);
 
+  const openImageModal = (imageUrl: string) => {
+    setSelectedImage(imageUrl);
+    document.body.style.overflow = 'hidden';
+  };
+
+  const closeImageModal = () => {
+    setSelectedImage(null);
+    document.body.style.overflow = 'unset';
+  };
+
   return (
     <Layout>
       {/* Page Header */}
-      <section className="pt-24 pb-12 bg-beige-50">
+      <section className="pt-16 pb-8 bg-beige-50">
         <div className="container mx-auto px-4">
           <div className="text-center animate-fade-up">
-            <h1 className="section-title text-gray-900 mb-6">הפרויקטים שלנו</h1>
+            <h1 className="section-title text-gray-900 mb-4">הפרויקטים שלנו</h1>
             <p className="body-large text-gray-600 max-w-2xl mx-auto">
               מבחר מעבודותינו המדגימות את הגישה המקצועית, הייחודית והיצירתית שלנו
             </p>
@@ -96,7 +108,7 @@ const Projects = () => {
       </section>
 
       {/* Filter Bar */}
-      <section className="py-8 bg-white border-b border-gray-200">
+      <section className="py-6 bg-white border-b border-gray-200">
         <div className="container mx-auto px-4">
           <div className="flex flex-wrap justify-center gap-2 md:gap-4">
             {categories.map(category => (
@@ -118,23 +130,30 @@ const Projects = () => {
       </section>
 
       {/* Projects Grid */}
-      <section className="py-16 bg-white">
+      <section className="py-12 bg-white">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredProjects.map((project, index) => (
               <div 
                 key={project.id} 
-                className="group cursor-pointer animate-fade-in"
+                className="group animate-fade-in"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <div className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
-                  <div className="relative overflow-hidden aspect-[4/5]">
+                  <div 
+                    className="relative overflow-hidden cursor-pointer"
+                    onClick={() => openImageModal(project.image)}
+                  >
                     <img
                       src={project.image}
                       alt={project.title}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                      <span className="bg-white/90 text-gray-900 px-4 py-2 rounded-full text-sm font-medium">
+                        לחץ להגדלה
+                      </span>
+                    </div>
                     <div className="absolute top-4 right-4">
                       <span className="bg-cream-500 text-gray-900 px-3 py-1 rounded-full text-sm font-medium">
                         {project.year}
@@ -153,7 +172,7 @@ const Projects = () => {
                       {project.title}
                     </h3>
                     
-                    <p className="text-gray-600 mb-4 leading-relaxed">
+                    <p className="text-gray-600 mb-4 leading-relaxed text-sm">
                       {project.description}
                     </p>
                     
@@ -175,6 +194,29 @@ const Projects = () => {
           )}
         </div>
       </section>
+
+      {/* Image Modal */}
+      {selectedImage && (
+        <div 
+          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
+          onClick={closeImageModal}
+        >
+          <div className="relative max-w-4xl max-h-full">
+            <button
+              onClick={closeImageModal}
+              className="absolute -top-12 right-0 text-white hover:text-cream-300 transition-colors"
+            >
+              <X size={32} />
+            </button>
+            <img
+              src={selectedImage}
+              alt="תמונה מוגדלת"
+              className="max-w-full max-h-full object-contain rounded-lg"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        </div>
+      )}
     </Layout>
   );
 };
