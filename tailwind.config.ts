@@ -53,7 +53,7 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
-				// Custom color palette for NMAEI Studio
+				// Refined color palette - soft, natural tones only
 				beige: {
 					50: '#faf9f7',
 					100: '#f2f0ec',
@@ -78,17 +78,29 @@ export default {
 					800: '#847055',
 					900: '#6b5a45',
 				},
-				gold: {
-					50: '#fffdf7',
-					100: '#fffaeb',
-					200: '#fff4d1',
-					300: '#ffe9a8',
-					400: '#ffd96e',
-					500: '#ffc234',
-					600: '#d9a02a',
-					700: '#b37d20',
-					800: '#8c5f19',
-					900: '#6b4615',
+				cream: {
+					50: '#fffef7',
+					100: '#fffceb',
+					200: '#fff8d1',
+					300: '#fff0a8',
+					400: '#ffe56e',
+					500: '#ffd334',
+					600: '#d4a821',
+					700: '#a8801a',
+					800: '#7a5c13',
+					900: '#524110',
+				},
+				stone: {
+					50: '#fafaf9',
+					100: '#f5f5f4',
+					200: '#e7e5e4',
+					300: '#d6d3d1',
+					400: '#a8a29e',
+					500: '#78716c',
+					600: '#57534e',
+					700: '#44403c',
+					800: '#292524',
+					900: '#1c1917',
 				}
 			},
 			fontFamily: {
