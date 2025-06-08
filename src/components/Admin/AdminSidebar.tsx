@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { 
@@ -11,12 +10,12 @@ import {
   EditIcon
 } from 'lucide-react';
 
-interface AdminSidebarProps {
-  activeSection: string;
-  onSectionChange: (section: string) => void;
-}
-
 type SidebarSection = 'media' | 'categories' | 'pages' | 'projects' | 'content' | 'settings' | 'site-settings';
+
+interface AdminSidebarProps {
+  activeSection: SidebarSection;
+  onSectionChange: (section: SidebarSection) => void;
+}
 
 const AdminSidebar = ({ activeSection, onSectionChange }: AdminSidebarProps) => {
   const sections = [
