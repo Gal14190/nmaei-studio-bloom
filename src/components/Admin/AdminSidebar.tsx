@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { 
@@ -7,10 +8,11 @@ import {
   SettingsIcon, 
   LayoutGridIcon,
   GlobeIcon,
-  EditIcon
+  EditIcon,
+  FolderOpenIcon
 } from 'lucide-react';
 
-type SidebarSection = 'media' | 'categories' | 'pages' | 'projects' | 'content' | 'settings' | 'site-settings';
+type SidebarSection = 'media' | 'advanced-media' | 'categories' | 'pages' | 'dynamic-pages' | 'projects' | 'content' | 'settings' | 'site-settings';
 
 interface AdminSidebarProps {
   activeSection: SidebarSection;
@@ -20,10 +22,22 @@ interface AdminSidebarProps {
 const AdminSidebar = ({ activeSection, onSectionChange }: AdminSidebarProps) => {
   const sections = [
     {
-      id: 'media' as SidebarSection,
-      label: 'Media Manager',
+      id: 'dynamic-pages' as SidebarSection,
+      label: 'Dynamic Pages',
+      icon: FolderOpenIcon,
+      description: 'Create & manage all pages'
+    },
+    {
+      id: 'advanced-media' as SidebarSection,
+      label: 'Media Library',
       icon: ImageIcon,
-      description: 'Upload and manage images'
+      description: 'Advanced media management'
+    },
+    {
+      id: 'media' as SidebarSection,
+      label: 'Basic Media',
+      icon: ImageIcon,
+      description: 'Simple media upload'
     },
     {
       id: 'projects' as SidebarSection,
@@ -41,7 +55,7 @@ const AdminSidebar = ({ activeSection, onSectionChange }: AdminSidebarProps) => 
       id: 'pages' as SidebarSection,
       label: 'Page Editor',
       icon: FileTextIcon,
-      description: 'Edit page structure'
+      description: 'Basic page structure'
     },
     {
       id: 'categories' as SidebarSection,
@@ -66,7 +80,7 @@ const AdminSidebar = ({ activeSection, onSectionChange }: AdminSidebarProps) => 
   return (
     <aside className="w-64 bg-white border-r border-stone-200 h-full">
       <div className="p-6">
-        <h2 className="text-lg font-medium text-stone-900 mb-6">Dashboard</h2>
+        <h2 className="text-lg font-medium text-stone-900 mb-6">CMS Dashboard</h2>
         <nav className="space-y-2">
           {sections.map((section) => {
             const Icon = section.icon;
