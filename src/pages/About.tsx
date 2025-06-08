@@ -77,7 +77,8 @@ const About = () => {
               <div className="border-t border-gray-200 pt-6">
                 <h3 className="text-xl font-medium text-gray-900 mb-3">השכלה מקצועית</h3>
                 <ul className="space-y-2 text-gray-600">
-                  <li>• הנדסאית אדריכלות - מכללת שנקר</li>
+                  <li>
+                </li>
                   <li>• תואר B.Design בעיצוב פנים - מכללת שנקר</li>
                   <li>• 3 שנות ניסיון מקצועי</li>
                   <li>
