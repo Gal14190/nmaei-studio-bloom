@@ -12,7 +12,7 @@ const HeroSection = () => {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
+      <div className="relative z-10 text-center px-4 max-w-4xl mx-auto bg-[#000a0e]/0">
         <div className="animate-fade-up">
           {/* Logo/Brand */}
           <div className="mb-8">
