@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { LogOut, Save, RotateCcw, Eye, Bell } from 'lucide-react';
@@ -7,15 +6,18 @@ import MediaManager from './MediaManager';
 import CategoryEditor from './CategoryEditor';
 import EnhancedPageEditor from './EnhancedPageEditor';
 import DesignSettings from './DesignSettings';
+import ProjectManager from './ProjectManager';
+import ContentManager from './ContentManager';
+import SiteSettings from './SiteSettings';
 
 interface AdminDashboardProps {
   onLogout: () => void;
 }
 
-type ActiveSection = 'media' | 'categories' | 'pages' | 'settings';
+type ActiveSection = 'media' | 'categories' | 'pages' | 'projects' | 'content' | 'settings' | 'site-settings';
 
 const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
-  const [activeSection, setActiveSection] = useState<ActiveSection>('media');
+  const [activeSection, setActiveSection] = useState<ActiveSection>('projects');
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [notifications, setNotifications] = useState([
     { id: 1, message: 'Auto-saved draft changes', time: '2 minutes ago' },
@@ -56,10 +58,16 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
         return <CategoryEditor onContentChange={() => setHasUnsavedChanges(true)} />;
       case 'pages':
         return <EnhancedPageEditor onContentChange={() => setHasUnsavedChanges(true)} />;
+      case 'projects':
+        return <ProjectManager onContentChange={() => setHasUnsavedChanges(true)} />;
+      case 'content':
+        return <ContentManager onContentChange={() => setHasUnsavedChanges(true)} />;
+      case 'site-settings':
+        return <SiteSettings onContentChange={() => setHasUnsavedChanges(true)} />;
       case 'settings':
         return <DesignSettings onContentChange={() => setHasUnsavedChanges(true)} />;
       default:
-        return <MediaManager onContentChange={() => setHasUnsavedChanges(true)} />;
+        return <ProjectManager onContentChange={() => setHasUnsavedChanges(true)} />;
     }
   };
 
