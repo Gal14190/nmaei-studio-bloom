@@ -77,7 +77,7 @@ const RichTextEditor = ({
   const [isEditing, setIsEditing] = useState(false);
 
   const formatText = (command: string) => {
-    document.execCommand(command, false);
+    document.execCommand(command, false, undefined);
   };
 
   const insertLink = () => {
@@ -134,7 +134,7 @@ const RichTextEditor = ({
         <div className="border-l border-stone-300 h-6 mx-2" />
         <select 
           className="text-sm border border-stone-300 rounded px-2 py-1"
-          onChange={(e) => formatText('formatBlock', e.target.value)}
+          onChange={(e) => formatText('formatBlock')}
         >
           <option value="">Format</option>
           <option value="h1">Heading 1</option>

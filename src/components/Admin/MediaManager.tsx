@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Upload, Trash2, Edit3, Search, Grid, List } from 'lucide-react';
+import { Upload, Trash2, Edit3, Search, Grid, List, ImageIcon } from 'lucide-react';
 
 interface MediaManagerProps {
   onContentChange: () => void;
@@ -147,7 +147,7 @@ const MediaManager = ({ onContentChange }: MediaManagerProps) => {
                   onClick={() => toggleImageSelection(image.id)}
                 >
                   <div className="aspect-square bg-stone-200 flex items-center justify-center">
-                    <Image className="w-12 h-12 text-stone-400" />
+                    <ImageIcon className="w-12 h-12 text-stone-400" />
                   </div>
                   <div className="p-3">
                     <p className="text-sm font-medium text-stone-900 truncate">
@@ -178,7 +178,7 @@ const MediaManager = ({ onContentChange }: MediaManagerProps) => {
                 >
                   <div className="flex items-center space-x-4">
                     <div className="w-12 h-12 bg-stone-200 rounded flex items-center justify-center">
-                      <Image className="w-6 h-6 text-stone-400" />
+                      <ImageIcon className="w-6 h-6 text-stone-400" />
                     </div>
                     <div>
                       <p className="font-medium text-stone-900">{image.name}</p>
