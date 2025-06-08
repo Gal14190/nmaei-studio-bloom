@@ -3,7 +3,9 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Upload, Trash2, Edit3, Search, Grid, List, ImageIcon } from 'lucide-react';
+import { Search, Grid, List, Plus, Filter, Tag } from 'lucide-react';
+import MediaUpload from './MediaUpload';
+import MediaItem from './MediaItem';
 
 interface MediaManagerProps {
   onContentChange: () => void;
@@ -13,29 +15,94 @@ const MediaManager = ({ onContentChange }: MediaManagerProps) => {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedImages, setSelectedImages] = useState<number[]>([]);
+  const [showUpload, setShowUpload] = useState(false);
+  const [filterTag, setFilterTag] = useState('');
 
-  // Mock data - in production this would come from backend
-  const [images] = useState([
-    { id: 1, name: 'project-1.jpg', size: '2.3 MB', uploadDate: '2024-01-15', category: 'Living Room' },
-    { id: 2, name: 'project-2.jpg', size: '1.8 MB', uploadDate: '2024-01-14', category: 'Kitchen' },
-    { id: 3, name: 'project-3.jpg', size: '3.1 MB', uploadDate: '2024-01-13', category: 'Bedroom' },
-    { id: 4, name: 'project-4.jpg', size: '2.7 MB', uploadDate: '2024-01-12', category: 'Bathroom' },
+  // Enhanced mock data with metadata
+  const [images, setImages] = useState([
+    { 
+      id: 1, 
+      name: 'project-1.jpg', 
+      size: '2.3 MB', 
+      uploadDate: '2024-01-15', 
+      category: 'Living Room',
+      title: 'Modern Living Space',
+      description: 'Contemporary living room with natural lighting',
+      tags: ['modern', 'interior', 'living']
+    },
+    { 
+      id: 2, 
+      name: 'project-2.jpg', 
+      size: '1.8 MB', 
+      uploadDate: '2024-01-14', 
+      category: 'Kitchen',
+      title: 'Minimalist Kitchen Design',
+      description: 'Clean lines and functional design',
+      tags: ['minimalist', 'kitchen', 'white']
+    },
+    { 
+      id: 3, 
+      name: 'project-3.jpg', 
+      size: '3.1 MB', 
+      uploadDate: '2024-01-13', 
+      category: 'Bedroom',
+      title: 'Cozy Bedroom Retreat',
+      description: 'Warm and inviting bedroom space',
+      tags: ['cozy', 'bedroom', 'wood']
+    },
+    { 
+      id: 4, 
+      name: 'project-4.jpg', 
+      size: '2.7 MB', 
+      uploadDate: '2024-01-12', 
+      category: 'Bathroom',
+      title: 'Luxury Bathroom',
+      description: 'Spa-like bathroom with premium finishes',
+      tags: ['luxury', 'bathroom', 'spa']
+    },
   ]);
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files) {
+  const handleFileUpload = (files: FileList) => {
+    // Simulate file processing
+    Array.from(files).forEach((file, index) => {
+      const newImage = {
+        id: Date.now() + index,
+        name: file.name,
+        size: `${(file.size / 1024 / 1024).toFixed(1)} MB`,
+        uploadDate: new Date().toISOString().split('T')[0],
+        category: 'Uncategorized',
+        title: file.name.replace(/\.[^/.]+$/, ""),
+        description: '',
+        tags: []
+      };
+      setImages(prev => [newImage, ...prev]);
+    });
+    
+    setShowUpload(false);
+    onContentChange();
+  };
+
+  const handleDeleteImage = (id: number) => {
+    if (confirm('Delete this image?')) {
+      setImages(prev => prev.filter(img => img.id !== id));
+      setSelectedImages(prev => prev.filter(imgId => imgId !== id));
       onContentChange();
-      alert(`${files.length} file(s) uploaded successfully!`);
     }
+  };
+
+  const handleUpdateImage = (id: number, data: any) => {
+    setImages(prev => prev.map(img => 
+      img.id === id ? { ...img, ...data } : img
+    ));
+    onContentChange();
   };
 
   const handleDeleteSelected = () => {
     if (selectedImages.length > 0) {
       if (confirm(`Delete ${selectedImages.length} selected image(s)?`)) {
+        setImages(prev => prev.filter(img => !selectedImages.includes(img.id)));
         setSelectedImages([]);
         onContentChange();
-        alert('Images deleted successfully!');
       }
     }
   };
@@ -48,10 +115,21 @@ const MediaManager = ({ onContentChange }: MediaManagerProps) => {
     );
   };
 
-  const filteredImages = images.filter(image =>
-    image.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    image.category.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredImages = images.filter(image => {
+    const matchesSearch = image.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         image.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         image.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         image.category.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesTag = !filterTag || image.tags?.some(tag => 
+      tag.toLowerCase().includes(filterTag.toLowerCase())
+    );
+    
+    return matchesSearch && matchesTag;
+  });
+
+  // Get all unique tags for filtering
+  const allTags = Array.from(new Set(images.flatMap(img => img.tags || [])));
 
   return (
     <div className="space-y-6">
@@ -77,41 +155,37 @@ const MediaManager = ({ onContentChange }: MediaManagerProps) => {
           >
             {viewMode === 'grid' ? <List className="w-4 h-4" /> : <Grid className="w-4 h-4" />}
           </Button>
+          <Button
+            onClick={() => setShowUpload(true)}
+            className="bg-stone-600 hover:bg-stone-700"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Upload
+          </Button>
         </div>
       </div>
 
-      {/* Upload Area */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Upload Images</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="border-2 border-dashed border-stone-300 rounded-lg p-8 text-center">
-            <Upload className="w-12 h-12 text-stone-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-stone-900 mb-2">
-              Drop files here or click to upload
-            </h3>
-            <p className="text-stone-600 mb-4">
-              Support for JPG, PNG, WebP files up to 10MB
-            </p>
-            <Input
-              type="file"
-              multiple
-              accept="image/*"
-              onChange={handleFileUpload}
-              className="hidden"
-              id="file-upload"
-            />
-            <Button asChild className="bg-stone-600 hover:bg-stone-700">
-              <label htmlFor="file-upload" className="cursor-pointer">
-                Choose Files
-              </label>
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Filters */}
+      <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-2">
+          <Tag className="w-4 h-4 text-stone-500" />
+          <select 
+            className="text-sm border border-stone-300 rounded px-3 py-1"
+            value={filterTag}
+            onChange={(e) => setFilterTag(e.target.value)}
+          >
+            <option value="">All Tags</option>
+            {allTags.map(tag => (
+              <option key={tag} value={tag}>{tag}</option>
+            ))}
+          </select>
+        </div>
+        <div className="text-sm text-stone-600">
+          {filteredImages.length} of {images.length} images
+        </div>
+      </div>
 
-      {/* Actions */}
+      {/* Bulk Actions */}
       {selectedImages.length > 0 && (
         <div className="flex items-center justify-between bg-stone-100 p-4 rounded-lg">
           <p className="text-stone-700">
@@ -124,8 +198,14 @@ const MediaManager = ({ onContentChange }: MediaManagerProps) => {
               onClick={handleDeleteSelected}
               className="text-red-600 border-red-300 hover:bg-red-50"
             >
-              <Trash2 className="w-4 h-4 mr-2" />
               Delete Selected
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setSelectedImages([])}
+            >
+              Clear Selection
             </Button>
           </div>
         </div>
@@ -137,67 +217,48 @@ const MediaManager = ({ onContentChange }: MediaManagerProps) => {
           {viewMode === 'grid' ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {filteredImages.map((image) => (
-                <div
+                <MediaItem
                   key={image.id}
-                  className={`relative group cursor-pointer border-2 rounded-lg overflow-hidden ${
-                    selectedImages.includes(image.id)
-                      ? 'border-stone-400 bg-stone-50'
-                      : 'border-stone-200 hover:border-stone-300'
-                  }`}
-                  onClick={() => toggleImageSelection(image.id)}
-                >
-                  <div className="aspect-square bg-stone-200 flex items-center justify-center">
-                    <ImageIcon className="w-12 h-12 text-stone-400" />
-                  </div>
-                  <div className="p-3">
-                    <p className="text-sm font-medium text-stone-900 truncate">
-                      {image.name}
-                    </p>
-                    <p className="text-xs text-stone-600">{image.category}</p>
-                    <p className="text-xs text-stone-500">{image.size}</p>
-                  </div>
-                  <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Button size="sm" variant="outline" className="h-8 w-8 p-0">
-                      <Edit3 className="w-3 h-3" />
-                    </Button>
-                  </div>
-                </div>
+                  image={image}
+                  isSelected={selectedImages.includes(image.id)}
+                  onSelect={toggleImageSelection}
+                  onDelete={handleDeleteImage}
+                  onUpdate={handleUpdateImage}
+                  viewMode={viewMode}
+                />
               ))}
             </div>
           ) : (
             <div className="space-y-2">
               {filteredImages.map((image) => (
-                <div
+                <MediaItem
                   key={image.id}
-                  className={`flex items-center justify-between p-4 rounded-lg cursor-pointer ${
-                    selectedImages.includes(image.id)
-                      ? 'bg-stone-100 border border-stone-300'
-                      : 'hover:bg-stone-50'
-                  }`}
-                  onClick={() => toggleImageSelection(image.id)}
-                >
-                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-stone-200 rounded flex items-center justify-center">
-                      <ImageIcon className="w-6 h-6 text-stone-400" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-stone-900">{image.name}</p>
-                      <p className="text-sm text-stone-600">{image.category}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-4">
-                    <span className="text-sm text-stone-600">{image.size}</span>
-                    <span className="text-sm text-stone-500">{image.uploadDate}</span>
-                    <Button size="sm" variant="outline">
-                      <Edit3 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
+                  image={image}
+                  isSelected={selectedImages.includes(image.id)}
+                  onSelect={toggleImageSelection}
+                  onDelete={handleDeleteImage}
+                  onUpdate={handleUpdateImage}
+                  viewMode={viewMode}
+                />
               ))}
+            </div>
+          )}
+          
+          {filteredImages.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-stone-500">No images found matching your criteria</p>
             </div>
           )}
         </CardContent>
       </Card>
+
+      {/* Upload Modal */}
+      {showUpload && (
+        <MediaUpload
+          onUpload={handleFileUpload}
+          onClose={() => setShowUpload(false)}
+        />
+      )}
     </div>
   );
 };

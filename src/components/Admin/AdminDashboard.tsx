@@ -1,11 +1,11 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { LogOut, Save, RotateCcw, Eye } from 'lucide-react';
+import { LogOut, Save, RotateCcw, Eye, Bell } from 'lucide-react';
 import AdminSidebar from './AdminSidebar';
 import MediaManager from './MediaManager';
 import CategoryEditor from './CategoryEditor';
-import PageEditor from './PageEditor';
+import EnhancedPageEditor from './EnhancedPageEditor';
 import DesignSettings from './DesignSettings';
 
 interface AdminDashboardProps {
@@ -17,17 +17,30 @@ type ActiveSection = 'media' | 'categories' | 'pages' | 'settings';
 const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
   const [activeSection, setActiveSection] = useState<ActiveSection>('media');
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [notifications, setNotifications] = useState([
+    { id: 1, message: 'Auto-saved draft changes', time: '2 minutes ago' },
+    { id: 2, message: 'New image uploaded', time: '5 minutes ago' },
+  ]);
 
   const handleSave = () => {
-    // In production, this would save to backend
     setHasUnsavedChanges(false);
-    alert('Changes saved successfully!');
+    const newNotification = {
+      id: Date.now(),
+      message: 'All changes saved successfully',
+      time: 'Just now'
+    };
+    setNotifications(prev => [newNotification, ...prev.slice(0, 4)]);
   };
 
   const handleReset = () => {
     if (confirm('Are you sure you want to reset to default settings? This cannot be undone.')) {
       setHasUnsavedChanges(false);
-      alert('Settings reset to default!');
+      const newNotification = {
+        id: Date.now(),
+        message: 'Settings reset to default',
+        time: 'Just now'
+      };
+      setNotifications(prev => [newNotification, ...prev.slice(0, 4)]);
     }
   };
 
@@ -42,7 +55,7 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
       case 'categories':
         return <CategoryEditor onContentChange={() => setHasUnsavedChanges(true)} />;
       case 'pages':
-        return <PageEditor onContentChange={() => setHasUnsavedChanges(true)} />;
+        return <EnhancedPageEditor onContentChange={() => setHasUnsavedChanges(true)} />;
       case 'settings':
         return <DesignSettings onContentChange={() => setHasUnsavedChanges(true)} />;
       default:
@@ -57,9 +70,21 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-light text-stone-900">Admin Dashboard</h1>
-            <p className="text-sm text-stone-600">Manage your website content</p>
+            <p className="text-sm text-stone-600">Professional CMS for NMAEI Studio</p>
           </div>
           <div className="flex items-center space-x-3">
+            {/* Notifications */}
+            <div className="relative">
+              <Button variant="outline" size="sm" className="relative">
+                <Bell className="w-4 h-4" />
+                {notifications.length > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {notifications.length}
+                  </span>
+                )}
+              </Button>
+            </div>
+            
             <Button
               onClick={handlePreview}
               variant="outline"
@@ -116,9 +141,25 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
         </main>
       </div>
 
+      {/* Status Indicators */}
       {hasUnsavedChanges && (
         <div className="fixed bottom-4 right-4 bg-amber-100 border border-amber-300 rounded-lg p-3">
           <p className="text-sm text-amber-800">You have unsaved changes</p>
+        </div>
+      )}
+
+      {/* Notifications Panel */}
+      {notifications.length > 0 && (
+        <div className="fixed bottom-4 left-4 bg-white border border-stone-200 rounded-lg p-4 shadow-lg max-w-sm">
+          <h4 className="font-medium text-stone-900 mb-2">Recent Activity</h4>
+          <div className="space-y-2">
+            {notifications.slice(0, 3).map(notification => (
+              <div key={notification.id} className="text-sm">
+                <p className="text-stone-700">{notification.message}</p>
+                <p className="text-stone-500 text-xs">{notification.time}</p>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>
