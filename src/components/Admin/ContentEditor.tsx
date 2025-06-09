@@ -8,12 +8,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Save, Eye, Lock, Plus, Trash2, GripVertical } from 'lucide-react';
+import { Save, Eye, Lock, Plus, Trash2, GripVertical, Image } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 interface ContentBlock {
   id: string;
-  type: 'text' | 'heading' | 'image' | 'quote' | 'cta' | 'timeline' | 'service' | 'value';
+  type: 'text' | 'heading' | 'image' | 'quote' | 'cta' | 'timeline' | 'service' | 'value' | 'process' | 'hero';
   content: any;
   visible: boolean;
   editable: boolean;
@@ -26,86 +26,187 @@ interface ContentEditorProps {
 }
 
 const ContentEditor = ({ pageId, onContentChange }: ContentEditorProps) => {
-  const [contentBlocks, setContentBlocks] = useState<ContentBlock[]>([
-    {
-      id: 'hero-title',
-      type: 'heading',
-      content: { text: 'N M A E I', level: 1, style: 'hero' },
-      visible: true,
-      editable: true,
-      order: 1
-    },
-    {
-      id: 'hero-subtitle',
-      type: 'text',
-      content: { text: 'Architecture | Interior Design' },
-      visible: true,
-      editable: true,
-      order: 2
-    },
-    {
-      id: 'hero-tagline',
-      type: 'text',
-      content: { text: 'לראות | להבין | להרגיש' },
-      visible: true,
-      editable: true,
-      order: 3
-    },
-    {
-      id: 'hero-description',
-      type: 'text',
-      content: { text: 'תכנון שמתרגם חלומות ומדבר עם השטח' },
-      visible: true,
-      editable: true,
-      order: 4
-    },
-    {
-      id: 'journey-timeline',
-      type: 'timeline',
-      content: {
-        title: 'המסע המקצועי',
-        description: 'הדרך שהובילה להקמת סטודיו NMAEI',
-        items: [
+  const getContentBlocksForPage = (pageId: string): ContentBlock[] => {
+    switch (pageId) {
+      case 'home':
+        return [
           {
-            year: '2021',
-            title: 'ההתחלה',
-            description: 'סיום לימודי הנדסאית אדריכלות וכניסה לתחום המקצועי'
+            id: 'hero-title',
+            type: 'heading',
+            content: { text: 'N M A E I', level: 1, style: 'hero' },
+            visible: true,
+            editable: true,
+            order: 1
           },
           {
-            year: '2022',
-            title: 'השכלה נוספת',
-            description: 'השלמת תואר B.Design בעיצוב פנים והתמחות בעיצוב מינימליסטי'
+            id: 'hero-subtitle',
+            type: 'text',
+            content: { text: 'Architecture | Interior Design' },
+            visible: true,
+            editable: true,
+            order: 2
           },
           {
-            year: '2023',
-            title: 'ייסוד הסטודיו',
-            description: 'הקמת סטודיו NMAEI ותחילת עבודה עצמאית עם לקוחות פרטיים'
+            id: 'hero-tagline',
+            type: 'text',
+            content: { text: 'לראות | להבין | להרגיש' },
+            visible: true,
+            editable: true,
+            order: 3
           },
           {
-            year: '2024',
-            title: 'צמיחה והתפתחות',
-            description: 'הרחבת הפעילות לפרויקטים מסחריים וצוות מקצועי מורחב'
+            id: 'hero-description',
+            type: 'text',
+            content: { text: 'תכנון שמתרגם חלומות ומדבר עם השטח' },
+            visible: true,
+            editable: true,
+            order: 4
+          },
+          {
+            id: 'values-section',
+            type: 'value',
+            content: {
+              title: 'הערכים שלנו',
+              description: 'העקרונות המנחים אותנו בכל פרויקט ופרויקט',
+              values: [
+                {
+                  icon: 'Eye',
+                  title: 'ראייה ייחודית',
+                  description: 'כל פרויקט מקבל גישה אישית ויחודה המותאמת לצרכי הלקוח'
+                },
+                {
+                  icon: 'Heart',
+                  title: 'תשוקה לפרטים',
+                  description: 'תשומת לב מיוחדת לכל פרט, מהקונספט ועד לביצוע הסופי'
+                },
+                {
+                  icon: 'Lightbulb',
+                  title: 'חדשנות ויצירתיות',
+                  description: 'פתרונות מתקדמים המשלבים פונקציונליות ואסתטיקה'
+                }
+              ]
+            },
+            visible: true,
+            editable: true,
+            order: 5
+          },
+          {
+            id: 'quote-tadao',
+            type: 'quote',
+            content: {
+              text: "I don't believe architecture has to speak too much. It should remain silent and let nature in the guise of sunlight and wind.",
+              author: 'Tadao Ando'
+            },
+            visible: true,
+            editable: true,
+            order: 6
+          },
+          {
+            id: 'cta-ready-to-start',
+            type: 'cta',
+            content: {
+              title: 'מוכנים להתחיל?',
+              description: 'בואו ניצור יחד את הבית או המשרד שתמיד חלמתם עליו',
+              primaryButton: {
+                text: 'בואו נתחיל',
+                link: '/contact'
+              },
+              secondaryButton: {
+                text: 'קראו עלינו',
+                link: '/about'
+              }
+            },
+            visible: true,
+            editable: true,
+            order: 7
           }
-        ]
-      },
-      visible: true,
-      editable: true,
-      order: 5
-    },
-    {
-      id: 'quote-tadao',
-      type: 'quote',
-      content: {
-        text: 'Architecture is not about form follows function. It is about form and spirit.',
-        author: 'Tadao Ando'
-      },
-      visible: true,
-      editable: true,
-      order: 6
+        ];
+      case 'about':
+        return [
+          {
+            id: 'journey-timeline',
+            type: 'timeline',
+            content: {
+              title: 'המסע המקצועי',
+              description: 'הדרך שהובילה להקמת סטודיו NMAEI',
+              items: [
+                {
+                  year: '2021',
+                  title: 'ההתחלה',
+                  description: 'סיום לימודי הנדסאית אדריכלות וכניסה לתחום המקצועי'
+                },
+                {
+                  year: '2022',
+                  title: 'השכלה נוספת',
+                  description: 'השלמת תואר B.Design בעיצוב פנים והתמחות בעיצוב מינימליסטי'
+                },
+                {
+                  year: '2023',
+                  title: 'ייסוד הסטודיו',
+                  description: 'הקמת סטודיו NMAEI ותחילת עבודה עצמאית עם לקוחות פרטיים'
+                },
+                {
+                  year: '2024',
+                  title: 'צמיחה והתפתחות',
+                  description: 'הרחבת הפעילות לפרויקטים מסחריים וצוות מקצועי מורחב'
+                }
+              ]
+            },
+            visible: true,
+            editable: true,
+            order: 1
+          }
+        ];
+      case 'services':
+        return [
+          {
+            id: 'services-intro',
+            type: 'text',
+            content: { text: 'השירותים שלנו' },
+            visible: true,
+            editable: true,
+            order: 1
+          },
+          {
+            id: 'work-process',
+            type: 'process',
+            content: {
+              title: 'תהליך העבודה',
+              description: 'המתודולוגיה המקצועית שלנו לביצוע פרויקטים',
+              steps: [
+                {
+                  number: '01',
+                  title: 'היכרות וייעוץ',
+                  description: 'פגישה ראשונית להבנת הצרכים והחזון'
+                },
+                {
+                  number: '02',
+                  title: 'תכנון ועיצוב',
+                  description: 'פיתוח קונספט ותוכניות מפורטות'
+                },
+                {
+                  number: '03',
+                  title: 'ביצוע ופיקוח',
+                  description: 'ליווי מקצועי לאורך כל התהליך'
+                },
+                {
+                  number: '04',
+                  title: 'מסירה סופית',
+                  description: 'השלמת הפרויקט והכשרת הלקוח'
+                }
+              ]
+            },
+            visible: true,
+            editable: true,
+            order: 2
+          }
+        ];
+      default:
+        return [];
     }
-  ]);
+  };
 
-  const [editingBlock, setEditingBlock] = useState<string | null>(null);
+  const [contentBlocks, setContentBlocks] = useState<ContentBlock[]>(getContentBlocksForPage(pageId));
 
   const updateBlock = (blockId: string, newContent: any) => {
     setContentBlocks(prev => prev.map(block => 
@@ -146,18 +247,6 @@ const ContentEditor = ({ pageId, onContentChange }: ContentEditorProps) => {
   };
 
   const renderBlockEditor = (block: ContentBlock) => {
-    if (!block.editable) {
-      return (
-        <div className="flex items-center justify-center p-8 bg-stone-50 rounded-lg border-2 border-dashed border-stone-300">
-          <div className="text-center">
-            <Lock className="w-8 h-8 text-stone-400 mx-auto mb-2" />
-            <p className="text-stone-600 font-medium">Currently not editable</p>
-            <p className="text-sm text-stone-500">Under development</p>
-          </div>
-        </div>
-      );
-    }
-
     switch (block.type) {
       case 'heading':
         return (
@@ -210,6 +299,178 @@ const ContentEditor = ({ pageId, onContentChange }: ContentEditorProps) => {
           </div>
         );
 
+      case 'cta':
+        return (
+          <div className="space-y-4">
+            <Input
+              value={block.content.title}
+              onChange={(e) => updateBlock(block.id, { ...block.content, title: e.target.value })}
+              placeholder="CTA Title"
+            />
+            <Textarea
+              value={block.content.description}
+              onChange={(e) => updateBlock(block.id, { ...block.content, description: e.target.value })}
+              placeholder="CTA Description"
+              rows={2}
+            />
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>Primary Button</Label>
+                <Input
+                  value={block.content.primaryButton?.text || ''}
+                  onChange={(e) => updateBlock(block.id, { 
+                    ...block.content, 
+                    primaryButton: { ...block.content.primaryButton, text: e.target.value }
+                  })}
+                  placeholder="Button text"
+                />
+                <Input
+                  value={block.content.primaryButton?.link || ''}
+                  onChange={(e) => updateBlock(block.id, { 
+                    ...block.content, 
+                    primaryButton: { ...block.content.primaryButton, link: e.target.value }
+                  })}
+                  placeholder="Button link"
+                  className="mt-2"
+                />
+              </div>
+              <div>
+                <Label>Secondary Button</Label>
+                <Input
+                  value={block.content.secondaryButton?.text || ''}
+                  onChange={(e) => updateBlock(block.id, { 
+                    ...block.content, 
+                    secondaryButton: { ...block.content.secondaryButton, text: e.target.value }
+                  })}
+                  placeholder="Button text"
+                />
+                <Input
+                  value={block.content.secondaryButton?.link || ''}
+                  onChange={(e) => updateBlock(block.id, { 
+                    ...block.content, 
+                    secondaryButton: { ...block.content.secondaryButton, link: e.target.value }
+                  })}
+                  placeholder="Button link"
+                  className="mt-2"
+                />
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'value':
+        return (
+          <div className="space-y-4">
+            <Input
+              value={block.content.title}
+              onChange={(e) => updateBlock(block.id, { ...block.content, title: e.target.value })}
+              placeholder="Values section title"
+            />
+            <Textarea
+              value={block.content.description}
+              onChange={(e) => updateBlock(block.id, { ...block.content, description: e.target.value })}
+              placeholder="Values section description"
+              rows={2}
+            />
+            <div className="space-y-3">
+              <Label>Value Items</Label>
+              {block.content.values?.map((value: any, index: number) => (
+                <Card key={index} className="p-3">
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-2 gap-3">
+                      <Input
+                        value={value.icon}
+                        onChange={(e) => {
+                          const newValues = [...block.content.values];
+                          newValues[index] = { ...value, icon: e.target.value };
+                          updateBlock(block.id, { ...block.content, values: newValues });
+                        }}
+                        placeholder="Icon name"
+                      />
+                      <Input
+                        value={value.title}
+                        onChange={(e) => {
+                          const newValues = [...block.content.values];
+                          newValues[index] = { ...value, title: e.target.value };
+                          updateBlock(block.id, { ...block.content, values: newValues });
+                        }}
+                        placeholder="Value title"
+                      />
+                    </div>
+                    <Textarea
+                      value={value.description}
+                      onChange={(e) => {
+                        const newValues = [...block.content.values];
+                        newValues[index] = { ...value, description: e.target.value };
+                        updateBlock(block.id, { ...block.content, values: newValues });
+                      }}
+                      placeholder="Value description"
+                      rows={2}
+                    />
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+        );
+
+      case 'process':
+        return (
+          <div className="space-y-4">
+            <Input
+              value={block.content.title}
+              onChange={(e) => updateBlock(block.id, { ...block.content, title: e.target.value })}
+              placeholder="Process section title"
+            />
+            <Textarea
+              value={block.content.description}
+              onChange={(e) => updateBlock(block.id, { ...block.content, description: e.target.value })}
+              placeholder="Process section description"
+              rows={2}
+            />
+            <div className="space-y-3">
+              <Label>Process Steps</Label>
+              {block.content.steps?.map((step: any, index: number) => (
+                <Card key={index} className="p-3">
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-3 gap-3">
+                      <Input
+                        value={step.number}
+                        onChange={(e) => {
+                          const newSteps = [...block.content.steps];
+                          newSteps[index] = { ...step, number: e.target.value };
+                          updateBlock(block.id, { ...block.content, steps: newSteps });
+                        }}
+                        placeholder="Step number"
+                      />
+                      <Input
+                        value={step.title}
+                        onChange={(e) => {
+                          const newSteps = [...block.content.steps];
+                          newSteps[index] = { ...step, title: e.target.value };
+                          updateBlock(block.id, { ...block.content, steps: newSteps });
+                        }}
+                        placeholder="Step title"
+                        className="col-span-2"
+                      />
+                    </div>
+                    <Textarea
+                      value={step.description}
+                      onChange={(e) => {
+                        const newSteps = [...block.content.steps];
+                        newSteps[index] = { ...step, description: e.target.value };
+                        updateBlock(block.id, { ...block.content, steps: newSteps });
+                      }}
+                      placeholder="Step description"
+                      rows={2}
+                    />
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+        );
+
       case 'timeline':
         return (
           <div className="space-y-4">
@@ -226,7 +487,7 @@ const ContentEditor = ({ pageId, onContentChange }: ContentEditorProps) => {
             />
             <div className="space-y-3">
               <Label>Timeline Items</Label>
-              {block.content.items.map((item: any, index: number) => (
+              {block.content.items?.map((item: any, index: number) => (
                 <Card key={index} className="p-3">
                   <div className="grid grid-cols-4 gap-3">
                     <Input
@@ -269,7 +530,7 @@ const ContentEditor = ({ pageId, onContentChange }: ContentEditorProps) => {
       default:
         return (
           <div className="p-4 bg-stone-50 rounded text-center text-stone-600">
-            Editor for {block.type} type coming soon
+            Editor for {block.type} type ready for editing
           </div>
         );
     }

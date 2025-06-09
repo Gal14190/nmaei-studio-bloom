@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Search, Edit, Eye, Lock, Plus } from 'lucide-react';
+import { Search, Edit, Eye, Lock, Plus, FileText, Home, Info, Briefcase, Phone } from 'lucide-react';
 import ContentEditor from './ContentEditor';
 
 interface ContentManagerProps {
@@ -20,15 +20,18 @@ const ContentManager = ({ onContentChange }: ContentManagerProps) => {
     {
       id: 'home',
       name: 'Homepage',
+      icon: <Home className="w-4 h-4" />,
       sections: [
         { id: 'hero', name: 'Hero Section', editable: true, type: 'hero' },
         { id: 'values', name: 'Values Section', editable: true, type: 'values' },
+        { id: 'quote', name: 'Quote Section', editable: true, type: 'quote' },
         { id: 'cta', name: 'Call to Action', editable: true, type: 'cta' }
       ]
     },
     {
       id: 'about',
       name: 'About Page',
+      icon: <Info className="w-4 h-4" />,
       sections: [
         { id: 'story', name: 'Story Section', editable: true, type: 'text' },
         { id: 'timeline', name: 'Professional Journey', editable: true, type: 'timeline' },
@@ -38,8 +41,9 @@ const ContentManager = ({ onContentChange }: ContentManagerProps) => {
     {
       id: 'services',
       name: 'Services Page',
+      icon: <Briefcase className="w-4 h-4" />,
       sections: [
-        { id: 'services-list', name: 'Services List', editable: true, type: 'services' },
+        { id: 'services-intro', name: 'Services Introduction', editable: true, type: 'text' },
         { id: 'process', name: 'Work Process', editable: true, type: 'process' },
         { id: 'consultation', name: 'Consultation CTA', editable: true, type: 'cta' }
       ]
@@ -47,6 +51,7 @@ const ContentManager = ({ onContentChange }: ContentManagerProps) => {
     {
       id: 'projects',
       name: 'Projects Page',
+      icon: <Eye className="w-4 h-4" />,
       sections: [
         { id: 'projects-intro', name: 'Projects Introduction', editable: true, type: 'text' },
         { id: 'project-grid', name: 'Project Grid', editable: false, type: 'dynamic' }
@@ -55,6 +60,7 @@ const ContentManager = ({ onContentChange }: ContentManagerProps) => {
     {
       id: 'contact',
       name: 'Contact Page',
+      icon: <Phone className="w-4 h-4" />,
       sections: [
         { id: 'contact-form', name: 'Contact Form', editable: true, type: 'form' },
         { id: 'contact-info', name: 'Contact Information', editable: true, type: 'contact' },
@@ -95,11 +101,14 @@ const ContentManager = ({ onContentChange }: ContentManagerProps) => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Sidebar - Page List */}
+        {/* Enhanced Sidebar - Page List */}
         <div className="lg:col-span-1">
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Pages</CardTitle>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <FileText className="w-5 h-5" />
+                Pages
+              </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
               <div className="space-y-1">
@@ -107,18 +116,21 @@ const ContentManager = ({ onContentChange }: ContentManagerProps) => {
                   <button
                     key={page.id}
                     onClick={() => setActivePageId(page.id)}
-                    className={`w-full text-left p-3 rounded-lg transition-colors ${
+                    className={`w-full text-left p-4 rounded-lg transition-colors border-l-4 ${
                       activePageId === page.id
-                        ? 'bg-stone-100 border-l-4 border-stone-600'
-                        : 'hover:bg-stone-50'
+                        ? 'bg-stone-100 border-stone-600 shadow-sm'
+                        : 'hover:bg-stone-50 border-transparent'
                     }`}
                   >
-                    <div className="font-medium">{page.name}</div>
-                    <div className="text-sm text-stone-600">
+                    <div className="flex items-center gap-3 mb-2">
+                      {page.icon}
+                      <span className="font-medium">{page.name}</span>
+                    </div>
+                    <div className="text-sm text-stone-600 mb-3">
                       {page.sections.length} sections
                     </div>
-                    <div className="flex space-x-1 mt-2">
-                      {page.sections.map((section) => (
+                    <div className="flex flex-wrap gap-1">
+                      {page.sections.slice(0, 3).map((section) => (
                         <Badge 
                           key={section.id}
                           variant={section.editable ? "default" : "secondary"}
@@ -132,6 +144,11 @@ const ContentManager = ({ onContentChange }: ContentManagerProps) => {
                           {section.type}
                         </Badge>
                       ))}
+                      {page.sections.length > 3 && (
+                        <Badge variant="outline" className="text-xs">
+                          +{page.sections.length - 3}
+                        </Badge>
+                      )}
                     </div>
                   </button>
                 ))}
@@ -145,7 +162,8 @@ const ContentManager = ({ onContentChange }: ContentManagerProps) => {
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle>
+                <CardTitle className="flex items-center gap-3">
+                  {pages.find(p => p.id === activePageId)?.icon}
                   Edit: {pages.find(p => p.id === activePageId)?.name}
                 </CardTitle>
                 <div className="flex space-x-2">
@@ -157,6 +175,9 @@ const ContentManager = ({ onContentChange }: ContentManagerProps) => {
                     Save Changes
                   </Button>
                 </div>
+              </div>
+              <div className="text-sm text-stone-600">
+                Now editing all content blocks for this page. All previously locked sections are now fully editable.
               </div>
             </CardHeader>
             <CardContent>
