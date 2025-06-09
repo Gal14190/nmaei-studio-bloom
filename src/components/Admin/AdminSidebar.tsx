@@ -9,10 +9,11 @@ import {
   LayoutGridIcon,
   GlobeIcon,
   EditIcon,
-  FolderOpenIcon
+  FolderOpenIcon,
+  PaletteIcon
 } from 'lucide-react';
 
-type SidebarSection = 'media' | 'advanced-media' | 'categories' | 'pages' | 'dynamic-pages' | 'projects' | 'content' | 'settings' | 'site-settings';
+type SidebarSection = 'media' | 'advanced-media' | 'categories' | 'pages' | 'dynamic-pages' | 'projects' | 'content' | 'settings' | 'site-settings' | 'site-wide';
 
 interface AdminSidebarProps {
   activeSection: SidebarSection;
@@ -23,21 +24,15 @@ const AdminSidebar = ({ activeSection, onSectionChange }: AdminSidebarProps) => 
   const sections = [
     {
       id: 'dynamic-pages' as SidebarSection,
-      label: 'Dynamic Pages',
+      label: 'Page Manager',
       icon: FolderOpenIcon,
       description: 'Create & manage all pages'
     },
     {
-      id: 'advanced-media' as SidebarSection,
-      label: 'Media Library',
-      icon: ImageIcon,
-      description: 'Advanced media management'
-    },
-    {
-      id: 'media' as SidebarSection,
-      label: 'Basic Media',
-      icon: ImageIcon,
-      description: 'Simple media upload'
+      id: 'content' as SidebarSection,
+      label: 'Content Editor',
+      icon: EditIcon,
+      description: 'Edit all text content'
     },
     {
       id: 'projects' as SidebarSection,
@@ -46,10 +41,22 @@ const AdminSidebar = ({ activeSection, onSectionChange }: AdminSidebarProps) => 
       description: 'Manage portfolio projects'
     },
     {
-      id: 'content' as SidebarSection,
-      label: 'Content',
-      icon: EditIcon,
-      description: 'Edit page content sections'
+      id: 'advanced-media' as SidebarSection,
+      label: 'Media Library',
+      icon: ImageIcon,
+      description: 'Advanced media management'
+    },
+    {
+      id: 'site-wide' as SidebarSection,
+      label: 'Site Settings',
+      icon: GlobeIcon,
+      description: 'Global site configuration'
+    },
+    {
+      id: 'media' as SidebarSection,
+      label: 'Basic Media',
+      icon: ImageIcon,
+      description: 'Simple media upload'
     },
     {
       id: 'pages' as SidebarSection,
@@ -65,14 +72,14 @@ const AdminSidebar = ({ activeSection, onSectionChange }: AdminSidebarProps) => 
     },
     {
       id: 'site-settings' as SidebarSection,
-      label: 'Site Settings',
-      icon: GlobeIcon,
-      description: 'Contact info & social links'
+      label: 'Legacy Settings',
+      icon: SettingsIcon,
+      description: 'Legacy contact & social'
     },
     {
       id: 'settings' as SidebarSection,
       label: 'Design Settings',
-      icon: SettingsIcon,
+      icon: PaletteIcon,
       description: 'Customize appearance'
     }
   ];

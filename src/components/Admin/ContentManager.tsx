@@ -2,252 +2,171 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Switch } from '@/components/ui/switch';
-import { Save, Copy, Trash2 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Search, Edit, Eye, Lock, Plus } from 'lucide-react';
+import ContentEditor from './ContentEditor';
 
 interface ContentManagerProps {
   onContentChange: () => void;
 }
 
-interface ContentSection {
-  id: string;
-  title: string;
-  content: string;
-  published: boolean;
-  page: string;
-  type: 'text' | 'rich-text' | 'hero' | 'section';
-}
-
 const ContentManager = ({ onContentChange }: ContentManagerProps) => {
-  const [contentSections, setContentSections] = useState<ContentSection[]>([
+  const [activePageId, setActivePageId] = useState('home');
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const pages = [
     {
-      id: 'about-journey',
-      title: 'המסע המקצועי',
-      content: 'הסטודיו שלנו נוסד בשנת 2020 מתוך חזון ברור - ליצור מרחבים שמשקפים את האישיות והצרכים הייחודיים של כל לקוח...',
-      published: true,
-      page: 'about',
-      type: 'section'
+      id: 'home',
+      name: 'Homepage',
+      sections: [
+        { id: 'hero', name: 'Hero Section', editable: true, type: 'hero' },
+        { id: 'values', name: 'Values Section', editable: true, type: 'values' },
+        { id: 'cta', name: 'Call to Action', editable: true, type: 'cta' }
+      ]
     },
     {
-      id: 'about-philosophy',
-      title: 'הפילוסופיה שלנו',
-      content: 'אנחנו מאמינים שעיצוב טוב מתחיל בהקשבה. כל פרויקט מתחיל בשיחה עמוקה עם הלקוח...',
-      published: true,
-      page: 'about',
-      type: 'section'
+      id: 'about',
+      name: 'About Page',
+      sections: [
+        { id: 'story', name: 'Story Section', editable: true, type: 'text' },
+        { id: 'timeline', name: 'Professional Journey', editable: true, type: 'timeline' },
+        { id: 'quote', name: 'Quote Section', editable: true, type: 'quote' }
+      ]
     },
     {
-      id: 'services-intro',
-      title: 'השירותים שלנו',
-      content: 'אנחנו מציעים מגוון רחב של שירותי עיצוב ואדריכלות, החל מתכנון מושלם ועד ביצוע מדויק...',
-      published: true,
-      page: 'services',
-      type: 'section'
+      id: 'services',
+      name: 'Services Page',
+      sections: [
+        { id: 'services-list', name: 'Services List', editable: true, type: 'services' },
+        { id: 'process', name: 'Work Process', editable: true, type: 'process' },
+        { id: 'consultation', name: 'Consultation CTA', editable: true, type: 'cta' }
+      ]
+    },
+    {
+      id: 'projects',
+      name: 'Projects Page',
+      sections: [
+        { id: 'projects-intro', name: 'Projects Introduction', editable: true, type: 'text' },
+        { id: 'project-grid', name: 'Project Grid', editable: false, type: 'dynamic' }
+      ]
+    },
+    {
+      id: 'contact',
+      name: 'Contact Page',
+      sections: [
+        { id: 'contact-form', name: 'Contact Form', editable: true, type: 'form' },
+        { id: 'contact-info', name: 'Contact Information', editable: true, type: 'contact' },
+        { id: 'working-hours', name: 'Working Hours', editable: true, type: 'hours' }
+      ]
     }
-  ]);
+  ];
 
-  const [activeSection, setActiveSection] = useState<ContentSection | null>(null);
-
-  const handleSaveSection = (section: ContentSection) => {
-    setContentSections(prev => 
-      prev.map(s => s.id === section.id ? section : s)
-    );
-    setActiveSection(null);
-    onContentChange();
-  };
-
-  const handleDuplicateSection = (section: ContentSection) => {
-    const newSection: ContentSection = {
-      ...section,
-      id: `${section.id}-copy-${Date.now()}`,
-      title: `${section.title} - עותק`,
-      published: false
-    };
-    setContentSections(prev => [...prev, newSection]);
-    onContentChange();
-  };
-
-  const handleDeleteSection = (id: string) => {
-    if (confirm('האם אתה בטוח שברצונך למחוק את הקטע?')) {
-      setContentSections(prev => prev.filter(s => s.id !== id));
-      onContentChange();
-    }
-  };
-
-  const handleTogglePublished = (id: string) => {
-    setContentSections(prev => prev.map(s => 
-      s.id === id ? { ...s, published: !s.published } : s
-    ));
-    onContentChange();
-  };
-
-  const pageGroups = contentSections.reduce((groups, section) => {
-    if (!groups[section.page]) {
-      groups[section.page] = [];
-    }
-    groups[section.page].push(section);
-    return groups;
-  }, {} as Record<string, ContentSection[]>);
+  const filteredPages = pages.filter(page => 
+    page.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    page.sections.some(section => 
+      section.name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  );
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-light text-stone-900">Content Manager</h2>
-          <p className="text-stone-600">Manage static content sections across all pages</p>
+          <h2 className="text-2xl font-light text-stone-900">Content Management</h2>
+          <p className="text-stone-600">Edit all text content across your website</p>
         </div>
-        <Button 
-          onClick={() => {
-            const newSection: ContentSection = {
-              id: `section-${Date.now()}`,
-              title: 'קטע חדש',
-              content: '',
-              published: false,
-              page: 'about',
-              type: 'section'
-            };
-            setActiveSection(newSection);
-          }}
-          className="bg-stone-600 hover:bg-stone-700"
-        >
-          Add New Section
-        </Button>
-      </div>
-
-      <Tabs defaultValue="about" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="about">About Page</TabsTrigger>
-          <TabsTrigger value="services">Services Page</TabsTrigger>
-          <TabsTrigger value="contact">Contact Page</TabsTrigger>
-        </TabsList>
-
-        {Object.entries(pageGroups).map(([page, sections]) => (
-          <TabsContent key={page} value={page}>
-            <div className="space-y-4">
-              {sections.map((section) => (
-                <Card key={section.id} className={`${!section.published ? 'border-orange-300 bg-orange-50' : ''}`}>
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-lg">{section.title}</CardTitle>
-                      <div className="flex items-center space-x-3">
-                        <div className="flex items-center space-x-2">
-                          <Switch
-                            checked={section.published}
-                            onCheckedChange={() => handleTogglePublished(section.id)}
-                            className="scale-75"
-                          />
-                          <span className="text-xs text-stone-600">
-                            {section.published ? 'Published' : 'Draft'}
-                          </span>
-                        </div>
-                        <div className="flex space-x-1">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setActiveSection(section)}
-                          >
-                            Edit
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleDuplicateSection(section)}
-                          >
-                            <Copy className="w-3 h-3" />
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleDeleteSection(section.id)}
-                            className="text-red-600 border-red-300 hover:bg-red-50"
-                          >
-                            <Trash2 className="w-3 h-3" />
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-stone-600 line-clamp-3">{section.content}</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </TabsContent>
-        ))}
-      </Tabs>
-
-      {activeSection && (
-        <Card className="mt-6">
-          <CardHeader>
-            <CardTitle>Edit Content Section</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <SectionEditor
-              section={activeSection}
-              onSave={handleSaveSection}
-              onCancel={() => setActiveSection(null)}
+        <div className="flex items-center space-x-3">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-stone-400" />
+            <Input
+              placeholder="Search content..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 w-64"
             />
-          </CardContent>
-        </Card>
-      )}
-    </div>
-  );
-};
-
-const SectionEditor = ({ 
-  section, 
-  onSave, 
-  onCancel 
-}: {
-  section: ContentSection;
-  onSave: (section: ContentSection) => void;
-  onCancel: () => void;
-}) => {
-  const [formData, setFormData] = useState(section);
-
-  const handleSave = () => {
-    onSave(formData);
-  };
-
-  return (
-    <div className="space-y-4">
-      <div>
-        <Label>Section Title</Label>
-        <Input
-          value={formData.title}
-          onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-        />
+          </div>
+          <Button className="bg-stone-600 hover:bg-stone-700">
+            <Plus className="w-4 h-4 mr-2" />
+            Add Section
+          </Button>
+        </div>
       </div>
 
-      <div>
-        <Label>Content</Label>
-        <Textarea
-          value={formData.content}
-          onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
-          rows={8}
-          className="font-mono text-sm"
-        />
-      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        {/* Sidebar - Page List */}
+        <div className="lg:col-span-1">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Pages</CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="space-y-1">
+                {filteredPages.map((page) => (
+                  <button
+                    key={page.id}
+                    onClick={() => setActivePageId(page.id)}
+                    className={`w-full text-left p-3 rounded-lg transition-colors ${
+                      activePageId === page.id
+                        ? 'bg-stone-100 border-l-4 border-stone-600'
+                        : 'hover:bg-stone-50'
+                    }`}
+                  >
+                    <div className="font-medium">{page.name}</div>
+                    <div className="text-sm text-stone-600">
+                      {page.sections.length} sections
+                    </div>
+                    <div className="flex space-x-1 mt-2">
+                      {page.sections.map((section) => (
+                        <Badge 
+                          key={section.id}
+                          variant={section.editable ? "default" : "secondary"}
+                          className="text-xs"
+                        >
+                          {section.editable ? (
+                            <Edit className="w-2 h-2 mr-1" />
+                          ) : (
+                            <Lock className="w-2 h-2 mr-1" />
+                          )}
+                          {section.type}
+                        </Badge>
+                      ))}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-      <div className="flex items-center space-x-2">
-        <Switch
-          checked={formData.published}
-          onCheckedChange={(checked) => setFormData(prev => ({ ...prev, published: checked }))}
-        />
-        <Label>Published</Label>
-      </div>
-
-      <div className="flex justify-end space-x-3 pt-4">
-        <Button variant="outline" onClick={onCancel}>Cancel</Button>
-        <Button onClick={handleSave} className="bg-stone-600 hover:bg-stone-700">
-          <Save className="w-4 h-4 mr-2" />
-          Save Section
-        </Button>
+        {/* Main Content Editor */}
+        <div className="lg:col-span-3">
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle>
+                  Edit: {pages.find(p => p.id === activePageId)?.name}
+                </CardTitle>
+                <div className="flex space-x-2">
+                  <Button variant="outline" size="sm">
+                    <Eye className="w-4 h-4 mr-2" />
+                    Preview
+                  </Button>
+                  <Button size="sm" className="bg-green-600 hover:bg-green-700">
+                    Save Changes
+                  </Button>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <ContentEditor 
+                pageId={activePageId}
+                onContentChange={onContentChange}
+              />
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );

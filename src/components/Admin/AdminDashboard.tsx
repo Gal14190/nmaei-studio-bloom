@@ -14,12 +14,13 @@ import ProjectManager from './ProjectManager';
 import ContentManager from './ContentManager';
 import SiteSettings from './SiteSettings';
 import DynamicPageManager from './DynamicPageManager';
+import SiteWideSettings from './SiteWideSettings';
 
 interface AdminDashboardProps {
   onLogout: () => void;
 }
 
-type ActiveSection = 'media' | 'advanced-media' | 'categories' | 'pages' | 'dynamic-pages' | 'projects' | 'content' | 'settings' | 'site-settings';
+type ActiveSection = 'media' | 'advanced-media' | 'categories' | 'pages' | 'dynamic-pages' | 'projects' | 'content' | 'settings' | 'site-settings' | 'site-wide';
 
 const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
   const [activeSection, setActiveSection] = useState<ActiveSection>('dynamic-pages');
@@ -86,6 +87,7 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
       case 'projects': return 'Project Management';
       case 'content': return 'Content Management';
       case 'site-settings': return 'Site Settings';
+      case 'site-wide': return 'Site-Wide Settings';
       case 'settings': return 'Design Settings';
       default: return 'Dashboard';
     }
@@ -109,6 +111,8 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
         return <ContentManager onContentChange={() => setHasUnsavedChanges(true)} />;
       case 'site-settings':
         return <SiteSettings onContentChange={() => setHasUnsavedChanges(true)} />;
+      case 'site-wide':
+        return <SiteWideSettings onContentChange={() => setHasUnsavedChanges(true)} />;
       case 'settings':
         return <DesignSettings onContentChange={() => setHasUnsavedChanges(true)} />;
       default:

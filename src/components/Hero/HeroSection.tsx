@@ -60,9 +60,9 @@ const HeroSection = () => {
               asChild 
               variant="outline" 
               size="lg" 
-              className="border-2 border-white text-white hover:bg-white hover:text-gray-900 font-medium transition-all duration-300 bg-white/20 backdrop-blur-sm"
+              className="border-2 border-white text-white hover:bg-white hover:text-gray-900 font-medium transition-all duration-300 bg-white/10 backdrop-blur-sm"
             >
-              <Link to="/contact" className="text-white hover:text-gray-900">
+              <Link to="/contact" className="text-white hover:text-gray-900 flex items-center justify-center">
                 צור קשר
               </Link>
             </Button>
