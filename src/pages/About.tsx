@@ -41,7 +41,7 @@ const About = () => {
       <section className="pt-24 pb-16 bg-beige-50">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center animate-fade-up">
-            <h1 className="section-title text-gray-900 mb-6"> NMAEI</h1>
+            <h1 className="section-title text-gray-900 mb-6"> M I N É A</h1>
             <p className="body-large text-gray-600 leading-relaxed">לראות | להבין | להרגיש </p>
           </div>
         </div>
@@ -117,8 +117,7 @@ const About = () => {
             <div className="text-center mb-12 animate-fade-up">
               <h2 className="section-title text-gray-900 mb-6">המסע המקצועי</h2>
               <p className="body-large text-gray-600">
-                הדרך שהובילה להקמת סטודיו NMAEI
-              </p>
+            </p>
             </div>
 
             <div className="space-y-8">
