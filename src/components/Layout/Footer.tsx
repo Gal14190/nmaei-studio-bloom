@@ -7,7 +7,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Studio Info */}
           <div className="space-y-4">
-            <h3 className="text-2xl font-light tracking-wider text-cream-400">NMAEI</h3>
+            <h3 className="text-2xl font-light tracking-wider text-cream-400">M I N É A</h3>
             <p className="text-gray-300 leading-relaxed">
               סטודיו לאדריכלות ועיצוב פנים<br />
               תכנון חכם, עיצוב מינימליסטי וחם
