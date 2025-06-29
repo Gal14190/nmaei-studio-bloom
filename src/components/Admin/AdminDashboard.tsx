@@ -15,15 +15,16 @@ import ContentManager from './ContentManager';
 import SiteSettings from './SiteSettings';
 import DynamicPageManager from './DynamicPageManager';
 import SiteWideSettings from './SiteWideSettings';
+import ContactMessages from './ContactMessages';
 
 interface AdminDashboardProps {
   onLogout: () => void;
 }
 
-type ActiveSection = 'media' | 'advanced-media' | 'categories' | 'pages' | 'dynamic-pages' | 'projects' | 'content' | 'settings' | 'site-settings' | 'site-wide';
+type ActiveSection = 'media' | 'advanced-media' | 'categories' | 'pages' | 'messages' | 'projects' | 'content' | 'settings' | 'site-settings' | 'site-wide';
 
 const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
-  const [activeSection, setActiveSection] = useState<ActiveSection>('dynamic-pages');
+  const [activeSection, setActiveSection] = useState<ActiveSection>('messages');
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [autoSaveEnabled, setAutoSaveEnabled] = useState(true);
@@ -40,18 +41,18 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
     }
   }, [hasUnsavedChanges, autoSaveEnabled]);
 
-  // Keyboard shortcuts
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-        e.preventDefault();
-        handleSave();
-      }
-    };
+  // // Keyboard shortcuts
+  // useEffect(() => {
+  //   const handleKeyDown = (e: KeyboardEvent) => {
+  //     if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+  //       e.preventDefault();
+  //       handleSave();
+  //     }
+  //   };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  //   window.addEventListener('keydown', handleKeyDown);
+  //   return () => window.removeEventListener('keydown', handleKeyDown);
+  // }, []);
 
   const handleSave = (isAutoSave = false) => {
     setHasUnsavedChanges(false);
@@ -79,7 +80,7 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
 
   const getSectionTitle = () => {
     switch (activeSection) {
-      case 'dynamic-pages': return 'Dynamic Page Management';
+      // case 'dynamic-pages': return 'Dynamic Page Management';
       case 'advanced-media': return 'Advanced Media Library';
       case 'media': return 'Basic Media Manager';
       case 'categories': return 'Category Management';
@@ -95,10 +96,10 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
 
   const renderActiveSection = () => {
     switch (activeSection) {
-      case 'dynamic-pages':
-        return <DynamicPageManager onContentChange={() => setHasUnsavedChanges(true)} />;
-      case 'advanced-media':
-        return <AdvancedMediaManager onContentChange={() => setHasUnsavedChanges(true)} />;
+      // case 'dynamic-pages':
+        // return <DynamicPageManager onContentChange={() => setHasUnsavedChanges(true)} />;
+      case 'messages':
+        return <ContactMessages />;
       case 'media':
         return <MediaManager onContentChange={() => setHasUnsavedChanges(true)} />;
       case 'categories':
@@ -140,7 +141,7 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
             </div>
             
             {/* Global Search */}
-            <div className="relative hidden md:block">
+            {/* <div className="relative hidden md:block">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-stone-400" />
               <Input
                 placeholder="Search pages, projects, media..."
@@ -148,7 +149,7 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 w-64"
               />
-            </div>
+            </div> */}
           </div>
           
           <div className="flex items-center space-x-3">
@@ -156,7 +157,7 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
             {hasUnsavedChanges && (
               <div className="flex items-center space-x-2 text-amber-600">
                 <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></div>
-                <span className="text-sm">Unsaved changes</span>
+                {/* <span className="text-sm">Unsaved changes</span> */}
               </div>
             )}
             
@@ -167,7 +168,7 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
               className="flex items-center gap-2"
             >
               <Eye className="w-4 h-4" />
-              Preview Site
+              לאתר
             </Button>
             
             <Button
@@ -177,10 +178,10 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
               className="flex items-center gap-2 text-orange-600 border-orange-300 hover:bg-orange-50"
             >
               <RotateCcw className="w-4 h-4" />
-              Reset
+              רענון
             </Button>
             
-            <Button
+            {/* <Button
               onClick={() => handleSave()}
               size="sm"
               className={`flex items-center gap-2 ${
@@ -191,7 +192,7 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
             >
               <Save className="w-4 h-4" />
               Save Changes
-            </Button>
+            </Button> */}
             
             <Button
               onClick={onLogout}
@@ -200,7 +201,7 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
               className="flex items-center gap-2 text-red-600 border-red-300 hover:bg-red-50"
             >
               <LogOut className="w-4 h-4" />
-              Logout
+              יציאה
             </Button>
           </div>
         </div>
@@ -220,7 +221,7 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
       </div>
 
       {/* Floating Save Indicator */}
-      {hasUnsavedChanges && (
+      {/* {hasUnsavedChanges && (
         <div className="fixed bottom-6 right-6 bg-amber-100 border border-amber-300 rounded-lg p-4 shadow-lg">
           <div className="flex items-center space-x-3">
             <div className="w-3 h-3 bg-amber-500 rounded-full animate-pulse"></div>
@@ -230,7 +231,7 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 };

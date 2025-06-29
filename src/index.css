@@ -1,3 +1,11 @@
+.bg-cream-500 {
+  background-color: #ece4db !important;
+}
+
+.text-cream-400 {
+  color: #ece4db !important;
+}
+
 
 @tailwind base;
 @tailwind components;

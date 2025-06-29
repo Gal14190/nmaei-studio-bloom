@@ -16,11 +16,11 @@ const SiteSettings = ({ onContentChange }: SiteSettingsProps) => {
   const [settings, setSettings] = useState({
     contact: {
       whatsapp: {
-        number: '972501234567',
+        number: '972532731575',
         message: 'שלום, אני מעוניין בייעוץ עיצוב'
       },
       email: 'Nofarmizr3008@gmail.com',
-      phone: '053-273-1575'
+      phone: '0523-273-1575'
     },
     social: {
       instagram: 'https://instagram.com/nmaei_studio',
@@ -89,11 +89,11 @@ const SiteSettings = ({ onContentChange }: SiteSettingsProps) => {
                 <Input
                   value={settings.contact.whatsapp.number}
                   onChange={(e) => handleSettingChange('contact', 'whatsapp', e.target.value, 'number')}
-                  placeholder="972501234567"
+                  placeholder="972532731575"
                 />
               </div>
               <div>
-                <Label>WhatsApp Default Message</Label>
+                <Label>הודעת ווצאפ</Label>
                 <Textarea
                   value={settings.contact.whatsapp.message}
                   onChange={(e) => handleSettingChange('contact', 'whatsapp', e.target.value, 'message')}

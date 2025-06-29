@@ -1,28 +1,86 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '@/components/Layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
-import { Phone, Mail, MapPin, MessageCircle, Instagram, Facebook } from 'lucide-react';
+import {
+  Phone,
+  Mail,
+  MapPin,
+  MessageCircle,
+  Instagram,
+  Facebook,
+} from 'lucide-react';
+import {
+  doc,
+  getDoc,
+  addDoc,
+  collection,
+  serverTimestamp,
+} from 'firebase/firestore';
+import { db } from '@/firebaseConfig';
+import Design from '../components/design';
 
 const Contact = () => {
+  /* ---------- state ---------- */
+  const [loading, setLoading] = useState(true);
+  const [siteData, setSiteData] = useState<any>(null);
+  const [title, setTitle] = useState({title: "", subtitle: ""})
+
+  const [design, setDesign] = useState({
+    darkColor: { backgroundColor: '#111827' },
+    lightColor: { backgroundColor: '#faf9f7' },
+  });
+
+  /* ---------- fetch site-wide settings + design ---------- */
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [designResult, settingsSnap] = await Promise.all([
+          Design(),
+          getDoc(doc(db, 'settings', 'config')),
+        ]);
+
+        setDesign(designResult);
+        if (settingsSnap.exists()) setSiteData(settingsSnap.data());
+        else console.warn('settings/config not found');
+
+        const docRef = doc(db, 'pages', 'contect');
+                const docSnap = await getDoc(docRef);
+        
+                if (docSnap.exists()) {
+                  const data = docSnap.data();
+                  const blocks = data.contentBlocks || [];
+        
+                  const title = blocks.find((b: any) => b.id === 'hero-title').content.text;
+                  const subtitle = blocks.find((b: any) => b.id === 'hero-subtitle').content.text;
+                  setTitle({title: title, subtitle: subtitle})
+                }
+      } catch (err) {
+        console.error('Error fetching site settings:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  /* ---------- form ---------- */
   const [formData, setFormData] = useState({
     fullName: '',
     phone: '',
     email: '',
-    message: ''
+    message: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -30,146 +88,179 @@ const Contact = () => {
     setIsSubmitting(true);
 
     try {
-      // Simulate form submission
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      toast({
-        title: "הודעה נשלחה בהצלחה!",
-        description: "נחזור אליכם בהקדם האפשרי.",
+      /* --- שמירת ההודעה במסד הנתונים --- */
+      await addDoc(collection(db, 'contactMessages'), {
+        ...formData,
+        createdAt: serverTimestamp(),
+        status: 'new', // אופציונלי: לשימוש עתידי
       });
 
-      // Reset form
-      setFormData({
-        fullName: '',
-        phone: '',
-        email: '',
-        message: ''
-      });
-    } catch (error) {
       toast({
-        title: "שגיאה בשליחת ההודעה",
-        description: "אנא נסו שוב מאוחר יותר.",
-        variant: "destructive"
+        title: 'הודעה נשלחה בהצלחה!',
+        description: 'נחזור אליכם בהקדם האפשרי.',
+      });
+
+      setFormData({ fullName: '', phone: '', email: '', message: '' });
+    } catch (err) {
+      console.error('Error saving contact message:', err);
+      toast({
+        title: 'שגיאה בשליחת ההודעה',
+        description: 'אנא נסו שוב מאוחר יותר.',
+        variant: 'destructive',
       });
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  /* ---------- loading ---------- */
+  if (loading || !siteData)
+    return <div className="text-center p-10"></div>;
+
+  /* ---------- derived data ---------- */
+  const { contact, social } = siteData;
+
+  const whatsappNumber = contact?.whatsapp?.number || '';
+  const whatsappMessage = encodeURIComponent(contact?.whatsapp?.message || '');
+  const whatsappLink = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`;
+
   const contactMethods = [
     {
       icon: <Phone className="w-6 h-6" />,
       title: 'טלפון',
-      details: '050-123-4567',
-      action: 'tel:050-123-4567'
+      details: contact?.phone,
+      action: `tel:${contact?.phone}`,
     },
     {
       icon: <Mail className="w-6 h-6" />,
       title: 'אימייל',
-      details: 'info@nmaei.com',
-      action: 'mailto:info@nmaei.com'
+      details: contact?.email,
+      action: `mailto:${contact?.email}`,
     },
     {
       icon: <MessageCircle className="w-6 h-6" />,
       title: 'WhatsApp',
       details: 'שליחת הודעה',
-      action: 'https://wa.me/972501234567'
+      action: whatsappLink,
     },
     {
       icon: <MapPin className="w-6 h-6" />,
       title: 'אזור שירות',
-      details: 'המרכז, ישראל',
-      action: null
-    }
+      details: contact?.address,
+      action: '/contact',
+    },
   ];
 
   const socialLinks = [
     {
       icon: <Instagram className="w-6 h-6" />,
       name: 'Instagram',
-      url: 'https://instagram.com/nmaei_studio',
-      handle: '@nmaei_studio'
+      url: social?.instagram,
+      handle: '@nmaei_studio',
     },
     {
       icon: <Facebook className="w-6 h-6" />,
       name: 'Facebook',
-      url: 'https://facebook.com/nmaei.studio',
-      handle: 'NMAEI Studio'
-    }
+      url: social?.facebook,
+      handle: 'NMAEI Studio',
+    },
   ];
 
+  /* ---------- UI ---------- */
   return (
     <Layout>
-      {/* Hero Section */}
-      <section className="pt-24 pb-16 bg-beige-50">
+      {/* HERO */}
+      <section className="pt-24 pb-16 bg-beige-50" style={design.lightColor}>
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center animate-fade-up">
-            <h1 className="section-title text-gray-900 mb-6">צור קשר</h1>
+            <h1 className="section-title text-gray-900 mb-6">{title.title}</h1>
             <p className="body-large text-gray-600 leading-relaxed">
-              מוזמנים ליצור איתנו קשר לקבלת ייעוץ מקצועי או לתיאום פגישה
+              {title.subtitle}
             </p>
           </div>
         </div>
       </section>
 
-      {/* Contact Methods */}
+      {/* CONTACT METHODS */}
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
-            {contactMethods.map((method, index) => (
-              <div 
-                key={index} 
-                className="text-center group animate-fade-up"
-                style={{animationDelay: `${index * 0.1}s`}}
-              >
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-gold-100 text-gold-600 rounded-full mb-4 group-hover:bg-gold-600 group-hover:text-white transition-colors duration-300">
-                  {method.icon}
-                </div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">{method.title}</h3>
-                {method.action ? (
-                  <a 
-                    href={method.action}
-                    target={method.action.startsWith('http') ? '_blank' : undefined}
-                    rel={method.action.startsWith('http') ? 'noopener noreferrer' : undefined}
-                    className="text-gray-600 hover:text-gold-600 transition-colors duration-300"
+            {contactMethods.map(
+              (m, i) =>
+                m.details && (
+                  <div
+                    key={i}
+                    className="text-center group animate-fade-up"
+                    style={{ animationDelay: `${i * 0.1}s` }}
                   >
-                    {method.details}
-                  </a>
-                ) : (
-                  <span className="text-gray-600">{method.details}</span>
-                )}
-              </div>
-            ))}
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-gold-100 text-gold-600 rounded-full mb-4 group-hover:bg-gold-600 group-hover:text-white transition-colors duration-300">
+                    {m.action ? (
+                      <a
+                        href={m.action}
+                        target={m.action.startsWith('http') ? '_blank' : undefined}
+                        rel={
+                          m.action.startsWith('http')
+                            ? 'noopener noreferrer'
+                            : undefined
+                        }
+                        className="text-gray-600 transition-colors duration-300"
+                      >
+                        {m.icon}
+                      </a>
+                    ) : (
+                      m.icon
+                    )}
+                    </div>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                      {m.title}
+                    </h3>
+                    {m.action ? (
+                      <a
+                        href={m.action}
+                        target={m.action.startsWith('http') ? '_blank' : undefined}
+                        rel={
+                          m.action.startsWith('http')
+                            ? 'noopener noreferrer'
+                            : undefined
+                        }
+                        className="text-gray-600 hover:text-gold-600 transition-colors duration-300"
+                      >
+                        {m.details}
+                      </a>
+                    ) : (
+                      <span className="text-gray-600">{m.details}</span>
+                    )}
+                  </div>
+                ),
+            )}
           </div>
         </div>
       </section>
 
-      {/* Contact Form & Info */}
+      {/* FORM + INFO */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
-            {/* Contact Form */}
+            {/* -------- FORM -------- */}
             <div className="animate-fade-up">
               <div className="bg-white rounded-lg shadow-lg p-8">
-                <h2 className="text-2xl font-medium text-gray-900 mb-6">שליחת הודעה</h2>
-                
+                <h2 className="text-2xl font-medium text-gray-900 mb-6">
+                  שליחת הודעה
+                </h2>
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
-                    <Label htmlFor="fullName" className="text-right">שם מלא *</Label>
+                    <Label htmlFor="fullName">שם מלא *</Label>
                     <Input
                       id="fullName"
                       name="fullName"
-                      type="text"
                       required
                       value={formData.fullName}
                       onChange={handleInputChange}
-                      className="mt-1"
                       placeholder="הכנס שם מלא"
                     />
                   </div>
-
                   <div>
-                    <Label htmlFor="phone" className="text-right">טלפון *</Label>
+                    <Label htmlFor="phone">טלפון *</Label>
                     <Input
                       id="phone"
                       name="phone"
@@ -177,13 +268,11 @@ const Contact = () => {
                       required
                       value={formData.phone}
                       onChange={handleInputChange}
-                      className="mt-1"
                       placeholder="050-123-4567"
                     />
                   </div>
-
                   <div>
-                    <Label htmlFor="email" className="text-right">אימייל *</Label>
+                    <Label htmlFor="email">אימייל *</Label>
                     <Input
                       id="email"
                       name="email"
@@ -191,28 +280,26 @@ const Contact = () => {
                       required
                       value={formData.email}
                       onChange={handleInputChange}
-                      className="mt-1"
                       placeholder="your@email.com"
                     />
                   </div>
-
                   <div>
-                    <Label htmlFor="message" className="text-right">הודעה *</Label>
+                    <Label htmlFor="message">הודעה *</Label>
                     <Textarea
                       id="message"
                       name="message"
                       required
                       value={formData.message}
                       onChange={handleInputChange}
-                      className="mt-1 min-h-[120px]"
                       placeholder="ספרו לנו על הפרויקט שלכם..."
+                      className="min-h-[120px]"
                     />
                   </div>
-
-                  <Button 
-                    type="submit" 
+                  <Button
+                    type="submit"
                     disabled={isSubmitting}
                     className="w-full bg-gold-600 hover:bg-gold-700 text-white"
+                    style={design.darkColor}
                   >
                     {isSubmitting ? 'שולח...' : 'שלח הודעה'}
                   </Button>
@@ -220,58 +307,74 @@ const Contact = () => {
               </div>
             </div>
 
-            {/* Additional Info */}
-            <div className="space-y-8 animate-fade-up" style={{animationDelay: '0.2s'}}>
-              {/* Working Hours */}
+            {/* -------- INFO BLOCKS -------- */}
+            <div
+              className="space-y-8 animate-fade-up"
+              style={{ animationDelay: '0.2s' }}
+            >
+              {/* שעות פעילות */}
               <div className="bg-white rounded-lg shadow-lg p-8">
-                <h3 className="text-xl font-medium text-gray-900 mb-4">שעות פעילות</h3>
+                <h3 className="text-xl font-medium text-gray-900 mb-4">
+                  שעות פעילות
+                </h3>
                 <div className="space-y-2 text-gray-600">
-                  <div className="flex justify-between">
-                    <span>ראשון - חמישי:</span>
-                    <span>09:00 - 18:00</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>שישי:</span>
-                    <span>09:00 - 13:00</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>שבת:</span>
-                    <span>סגור</span>
-                  </div>
+                  {Object.entries(contact?.workingHours || {}).map(
+                    ([day, { enabled, hours }]: any) =>
+                      enabled && (
+                        <div key={day} className="flex justify-between">
+                          <span>{translateDay(day)}</span>
+                          <span>{hours}</span>
+                        </div>
+                      ),
+                  )}
                 </div>
               </div>
 
-              {/* Social Media */}
+              {/* רשתות חברתיות */}
               <div className="bg-white rounded-lg shadow-lg p-8">
-                <h3 className="text-xl font-medium text-gray-900 mb-4">עקבו אחרינו</h3>
+                <h3 className="text-xl font-medium text-gray-900 mb-4">
+                  עקבו אחרינו
+                </h3>
                 <div className="space-y-4">
-                  {socialLinks.map((social, index) => (
-                    <a
-                      key={index}
-                      href={social.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-4 text-gray-600 hover:text-gold-600 transition-colors duration-300 group"
-                    >
-                      <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center group-hover:bg-gold-100 transition-colors duration-300">
-                        {social.icon}
-                      </div>
-                      <div>
-                        <div className="font-medium">{social.name}</div>
-                        <div className="text-sm text-gray-500">{social.handle}</div>
-                      </div>
-                    </a>
-                  ))}
+                  {socialLinks.map(
+                    (s, i) =>
+                      s.url && (
+                        <a
+                          key={i}
+                          href={s.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-4 text-gray-600 hover:text-gold-600 transition-colors duration-300 group"
+                        >
+                          <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center group-hover:bg-gold-100 transition-colors duration-300">
+                            {s.icon}
+                          </div>
+                          <div>
+                            <div className="font-medium">{s.name}</div>
+                            <div className="text-sm text-gray-500">
+                              {s.handle}
+                            </div>
+                          </div>
+                        </a>
+                      ),
+                  )}
                 </div>
               </div>
 
-              {/* Quick WhatsApp */}
+              {/* WhatsApp CTA */}
               <div className="bg-green-50 rounded-lg p-6 border border-green-200">
-                <h3 className="text-lg font-medium text-gray-900 mb-3">צריכים ייעוץ מהיר?</h3>
-                <p className="text-gray-600 mb-4">שלחו לנו הודעה בוואטסאפ ונחזור אליכם תוך זמן קצר</p>
-                <Button asChild className="bg-green-600 hover:bg-green-700 text-white">
-                  <a 
-                    href="https://wa.me/972501234567?text=שלום, אני מעוניין בייעוץ עיצוב"
+                <h3 className="text-lg font-medium text-gray-900 mb-3">
+                  צריכים ייעוץ מהיר?
+                </h3>
+                <p className="text-gray-600 mb-4">
+                  שלחו לנו הודעה בוואטסאפ ונחזור אליכם תוך זמן קצר
+                </p>
+                <Button
+                  asChild
+                  className="bg-green-600 hover:bg-green-700 text-white"
+                >
+                  <a
+                    href={whatsappLink}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-2"
@@ -287,6 +390,20 @@ const Contact = () => {
       </section>
     </Layout>
   );
+};
+
+/* ---------- helper ---------- */
+const translateDay = (day: string): string => {
+  const days: Record<string, string> = {
+    sunday: 'ראשון',
+    monday: 'שני',
+    tuesday: 'שלישי',
+    wednesday: 'רביעי',
+    thursday: 'חמישי',
+    friday: 'שישי',
+    saturday: 'שבת',
+  };
+  return days[day] || day;
 };
 
 export default Contact;

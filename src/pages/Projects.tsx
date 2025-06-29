@@ -1,285 +1,242 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Layout from '@/components/Layout/Layout';
 import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
+import {
+  collection,
+  getDocs,
+  getDoc,
+  doc,
+  query,
+} from 'firebase/firestore';
+import { db } from '../firebaseConfig';
+import Design from '../components/design';
+
+interface Project {
+  id: string;
+  title: string;
+  category: string;
+  location: string;
+  year: string;
+  coverImage: string; // זה מזהה (ID) של תמונה
+  description: string;
+  materials: string;
+  client?: string;
+  designConcept?: string;
+  tags: string[];
+  gallery: string[]; // מזהי תמונות
+  published: boolean;
+  slug: string;
+}
+
+interface Category {
+  id: string;
+  label: string;
+}
+
+interface ImageCache {
+  [id: string]: string; // map from image ID to URL
+}
 
 const Projects = () => {
+  const [design, setDesign] = useState({
+    darkColor: { backgroundColor: '#111827' },
+    lightColor: { backgroundColor: '#faf9f7' },
+  });
+  const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState('all');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [galleryImages, setGalleryImages] = useState<string[]>([]);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [imageMap, setImageMap] = useState<ImageCache>({});
 
-  const categories = [
-    { id: 'all', label: 'הכל' },
-    { id: 'apartments', label: 'דירות' },
-    { id: 'houses', label: 'בתים' },
-    { id: 'commercial', label: 'מסחרי' },
-    { id: 'offices', label: 'משרדים' }
-  ];
+  const [pageContent, setPageContent] = useState({
+    title: { text: '' },
+    subtitle: { text: '' },
+  });
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
 
-  const projects = [
-    {
-      id: 1,
-      title: 'דירה מינימליסטית בתל אביב',
-      category: 'apartments',
-      location: 'תל אביב',
-      image: '/lovable-uploads/26882b0c-ca51-42ec-9c11-bf089d9cfc7b.png',
-      description: 'עיצוב נקי ומודרני המשלב פונקציונליות עם אסתטיקה מינימליסטית. הפרויקט כולל עיצוב מחדש מלא של דירת 4 חדרים במרכז תל אביב.',
-      materials: 'עץ אלון, שיש לבן, זכוכית',
-      year: '2024'
-    },
-    {
-      id: 2,
-      title: 'בית פרטי בהרצליה',
-      category: 'houses',
-      location: 'הרצליה',
-      image: '/lovable-uploads/7b2d2c09-e0eb-4d31-928f-8332dda0acdc.png',
-      description: 'אדריכלות עכשווית עם חיבור חזק לטבע ולנוף. תכנון בית פרטי יוקרתי הכולל גינה פרטית ובריכת שחייה.',
-      materials: 'בטון חשוף, עץ טיק, אבן טבעית',
-      year: '2024'
-    },
-    {
-      id: 3,
-      title: 'חדר אמבטיה יוקרתי',
-      category: 'apartments',
-      location: 'רמת גן',
-      image: '/lovable-uploads/e0c6aeb2-cfc6-4c92-b675-e0c005c3e481.png',
-      description: 'עיצוב ספא ביתי עם שילוב אבן טבעית ואלמנטים מינימליסטיים. חדר אמבטיה ראשי הכולל אמבטיה עומדת ומקלחת זכוכית.',
-      materials: 'אבן טבעית, עץ במבוק, ברונזה',
-      year: '2023'
-    },
-    {
-      id: 4,
-      title: 'חדר אמבטיה מודרני',
-      category: 'houses',
-      location: 'כפר סבא',
-      image: '/lovable-uploads/3a5c7c4f-9b3c-4616-a008-11145645b34d.png',
-      description: 'חדר אמבטיה יוקרתי עם אמבט אבן וטקסטורות טבעיות. שילוב חכם של תאורה טבעית ומלאכותית.',
-      materials: 'שיש, עץ אגוז, פליז',
-      year: '2023'
-    },
-    {
-      id: 5,
-      title: 'סלון יוקרתי',
-      category: 'apartments',
-      location: 'תל אביב',
-      image: '/lovable-uploads/0a85161f-705c-4a04-ad1a-921ed6a25804.png',
-      description: 'סלון מודרני עם פריטי עיצוב ייחודיים ותאורה מותאמת. מרחב פתוח המקשר בין המטבח לסלון.',
-      materials: 'עור איטלקי, עץ אלון, מתכת',
-      year: '2023'
-    },
-    {
-      id: 6,
-      title: 'חדר שינה מעוצב',
-      category: 'houses',
-      location: 'רעננה',
-      image: '/lovable-uploads/27c74a05-6338-4ae2-b8ca-2231ff6e02d2.png',
-      description: 'חדר שינה יוקרתי עם חלונות גדולים ועיצוב אלגנטי. שילוב של חומרים טבעיים עם טכנולוגיה מתקדמת.',
-      materials: 'עץ ונגה, בדים טבעיים, זכוכית',
-      year: '2023'
-    },
-    {
-      id: 7,
-      title: 'חדר שינה מינימליסטי',
-      category: 'apartments',
-      location: 'תל אביב',
-      image: '/lovable-uploads/b703db5d-567a-40e3-ae88-77bfba99416b.png',
-      description: 'עיצוב חדר שינה מינימליסטי עם מיטה פלטפורמה, תאורה מוסתרת ופלטת צבעים חמה ורגועה. שילוב של עץ טבעי ואבן עם אלמנטים מודרניים.',
-      materials: 'עץ אלון, אבן טבעית, בד כותנה',
-      year: '2024'
-    },
-    {
-      id: 8,
-      title: 'סלון פתוח עם נוף עירוני',
-      category: 'apartments',
-      location: 'רמת גן',
-      image: '/lovable-uploads/1c80ddce-0dd5-4ec4-a21d-f0d701c3f30d.png',
-      description: 'מרחב מגורים פתוח עם נוף עירוני מרהיב. עיצוב מודרני המדגיש את הקשר עם הסביבה החיצונה דרך חלונות גדולים ומרפסת פתוחה.',
-      materials: 'בטון, עץ טיק, עור איטלקי',
-      year: '2024'
-    },
-    {
-      id: 9,
-      title: 'מטבח מודרני ופונקציונלי',
-      category: 'apartments',
-      location: 'תל אביב',
-      image: '/lovable-uploads/017bebea-5894-4666-84bb-de24193a2eee.png',
-      description: 'מטבח מודרני עם אי מרכזי, ארונות ללא ידיות ותאורה מתקדמת. עיצוב נקי המשלב פונקציונליות מקסימלית עם אסתטיקה מינימליסטית.',
-      materials: 'קוריאן, אלומיניום, זכוכית',
-      year: '2024'
-    },
-    {
-      id: 10,
-      title: 'סלון עם קיר אבן טבעית',
-      category: 'houses',
-      location: 'הרצליה',
-      image: '/lovable-uploads/f9a7ebd1-5328-4900-b095-ec4787056fac.png',
-      description: 'סלון יוקרתי עם קיר אבן טבעית מרהיב ותאורה דרמטית. שילוב של טקסטורות טבעיות עם ריהוט מודרני ונקי.',
-      materials: 'אבן טבעית, עץ אגוז, פליז',
-      year: '2024'
-    },
-    {
-      id: 11,
-      title: 'סלון עם קמין וקיר עץ',
-      category: 'houses',
-      location: 'כפר סבא',
-      image: '/lovable-uploads/24f8fb4c-2fdf-4441-bf72-e5521b295cb9.png',
-      description: 'מרחב מגורים אלגנטי עם קמין מודרני וקיר עץ מעוצב. עיצוב שמדגיש חום ונוחות תוך שמירה על קווים נקיים ומודרניים.',
-      materials: 'עץ אלון, שיש קררה, מתכת',
-      year: '2024'
-    },
-    {
-      id: 12,
-      title: 'חדר אמבטיה עם אמבט אבן',
-      category: 'houses',
-      location: 'רעננה',
-      image: '/lovable-uploads/d9024623-b85c-40e5-a5c0-6e264f6c1cab.png',
-      description: 'חדר אמבטיה יוקרתי עם אמבט אבן מרהיב ותאורה מתחתית. שילוב של חומרים טבעיים עם טכנולוגיה מתקדמת ליצירת חוויית ספא ביתית.',
-      materials: 'אבן בזלת, עץ טיק, ברונזה',
-      year: '2024'
-    },
-    {
-      id: 13,
-      title: 'חדר ילדים יצירתי',
-      category: 'apartments',
-      location: 'גבעתיים',
-      image: '/lovable-uploads/cc992aff-ed25-47d5-bc5e-abd17b330501.png',
-      description: 'חדר ילדים מעוצב עם מתקני משחק מובנים, מיטת קומתיים ופינת קריאה נעימה. עיצוב שמעודד יצירתיות ומשחק תוך שמירה על ארגון ופונקציונליות.',
-      materials: 'עץ ליבנה, בד כותנה, פלסטיק בטוח',
-      year: '2024'
-    },
-    {
-      id: 14,
-      title: 'שירותי אורחים מעוצבים',
-      category: 'apartments',
-      location: 'תל אביב',
-      image: '/lovable-uploads/c50f5f48-62fa-401f-9cbb-268ca89b0107.png',
-      description: 'שירותי אורחים קומפקטיים ומעוצבים עם כיור מיוחד ותאורה דרמטית. עיצוב המדגיש איכות ופרטים מושקעים במרחב קטן.',
-      materials: 'שיש קלקטה, ברונזה מוברש, עץ אגוז',
-      year: '2024'
-    },
-    {
-      id: 15,
-      title: 'פינת איפור מעוצבת',
-      category: 'houses',
-      location: 'הרצליה',
-      image: '/lovable-uploads/ea51160a-a9c7-4546-8755-89f9778d453c.png',
-      description: 'פינת איפור אלגנטית עם תאורה מקצועית ומראה מעוצבת. שילוב של חומרים איכותיים ועיצוב פונקציונלי ליצירת מרחב אישי ייחודי.',
-      materials: 'עץ אגוז, שיש לבן, ברונזה',
-      year: '2024'
-    },
-    {
-      id: 16,
-      title: 'כניסה עם מדרגות מעוצבות',
-      category: 'houses',
-      location: 'רעננה',
-      image: '/lovable-uploads/30d42e65-b4ea-42f9-bcd3-b58b949692c8.png',
-      description: 'כניסה מרשימה עם מדרגות תלויות ופתרונות אחסון מובנים. עיצוב שמנצל כל סנטימטר תוך יצירת מרחב מסדר ואלגנטי.',
-      materials: 'עץ אלון, מתכת שחורה, אבן טבעית',
-      year: '2024'
+  useEffect(() => {
+    const fetchAll = async () => {
+      try {
+        const designRes = await Design();
+        setDesign(designRes);
+
+        const catSnap = await getDocs(collection(db, 'categories'));
+        const catData: Category[] = catSnap.docs.map((d) => ({
+          id: d.id,
+          label: (d.data().name as string) || 'ללא שם',
+        }));
+        setCategories([{ id: 'all', label: 'הכל' }, ...catData]);
+
+        const projSnap = await getDocs(query(collection(db, 'projects')));
+        const projData = projSnap.docs.map(
+          (d) => ({ id: d.id, ...(d.data() as Project) }) as Project
+        );
+        setProjects(projData);
+
+        const imageIds = new Set<string>();
+        projData.forEach((proj) => {
+          if (proj.coverImage) imageIds.add(proj.coverImage);
+          (proj.gallery || []).forEach((id) => imageIds.add(id));
+        });
+
+        const imageEntries = await Promise.all(
+          Array.from(imageIds).map(async (id) => {
+            try {
+              const snap = await getDoc(doc(db, 'gallery', id));
+              if (snap.exists()) {
+                return [id, snap.data().url];
+              }
+              return null;
+            } catch (err) {
+              console.error(`שגיאה בטעינת תמונה ${id}`, err);
+              return null;
+            }
+          })
+        );
+
+        const validImages: ImageCache = {};
+        imageEntries.forEach((entry) => {
+          if (entry) validImages[entry[0]] = entry[1];
+        });
+
+        setImageMap(validImages);
+
+        const pageSnap = await getDoc(doc(db, 'pages', 'projects'));
+        if (pageSnap.exists()) {
+          const blocks = pageSnap.data().contentBlocks || [];
+          const getBlock = (id: string) =>
+            blocks.find((b: any) => b.id === id)?.content;
+          setPageContent({
+            title: getBlock('hero-title') || { text: '' },
+            subtitle: getBlock('hero-subtitle') || { text: '' },
+          });
+        }
+      } catch (err) {
+        console.error('Data load error:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAll();
+  }, []);
+
+  const filteredProjects = useMemo(
+    () =>
+      activeFilter === 'all'
+        ? projects
+        : projects.filter((p) => p.category === activeFilter),
+    [activeFilter, projects]
+  );
+
+  const openImageModal = (coverImageId: string, galleryIds: string[]) => {
+    const urls: string[] = [];
+  
+    if (imageMap[coverImageId]) {
+      urls.push(imageMap[coverImageId]);
     }
-  ];
-
-  const filteredProjects = activeFilter === 'all' 
-    ? projects 
-    : projects.filter(project => project.category === activeFilter);
-
-  const openImageModal = (imageUrl: string) => {
-    setSelectedImage(imageUrl);
+  
+    galleryIds.forEach((id) => {
+      const url = imageMap[id];
+      if (url && !urls.includes(url)) {
+        urls.push(url);
+      }
+    });
+  
+    if (urls.length === 0) return;
+  
+    setGalleryImages(urls);
+    setSelectedImage(urls[0]);
+    setSelectedImageIndex(0);
     document.body.style.overflow = 'hidden';
   };
+  
 
   const closeImageModal = () => {
     setSelectedImage(null);
+    setGalleryImages([]);
+    setSelectedImageIndex(0);
     document.body.style.overflow = 'unset';
   };
 
+  const getCategoryLabel = (id: string) =>
+    categories.find((c) => c.id === id)?.label || id;
+
+  if (loading) return <div className="text-center p-10">טוען...</div>;
+
   return (
     <Layout>
-      {/* Page Header */}
-      <section className="pt-16 pb-8 bg-beige-50">
-        <div className="container mx-auto px-4">
-          <div className="text-center animate-fade-up">
-            <h1 className="section-title text-gray-900 mb-4">הפרויקטים שלנו</h1>
-            <p className="body-large text-gray-600 max-w-2xl mx-auto">
-              מבחר מעבודותינו המדגימות את הגישה המקצועית, הייחודית והיצירתית שלנו
-            </p>
-          </div>
+      <section className="pt-16 pb-8 bg-beige-50" style={design.lightColor}>
+        <div className="container mx-auto px-4 text-center animate-fade-up">
+          <h1 className="section-title text-gray-900 mb-4">
+            {pageContent.title.text}
+          </h1>
+          <p className="body-large text-gray-600 max-w-2xl mx-auto">
+            {pageContent.subtitle.text}
+          </p>
         </div>
       </section>
 
-      {/* Filter Bar */}
       <section className="py-6 bg-white border-b border-gray-200">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-wrap justify-center gap-2 md:gap-4">
-            {categories.map(category => (
-              <Button
-                key={category.id}
-                variant={activeFilter === category.id ? "default" : "outline"}
-                onClick={() => setActiveFilter(category.id)}
-                className={`${
-                  activeFilter === category.id 
-                    ? "bg-cream-500 hover:bg-cream-600 text-gray-900" 
-                    : "border-gray-300 text-gray-700 hover:bg-cream-50 hover:border-cream-300 hover:text-cream-700"
-                }`}
-              >
-                {category.label}
-              </Button>
-            ))}
-          </div>
+        <div className="container mx-auto px-4 flex flex-wrap justify-center gap-2 md:gap-4">
+          {categories.map((cat) => (
+            <Button
+              key={cat.id}
+              variant={activeFilter === cat.id ? 'default' : 'outline'}
+              onClick={() => setActiveFilter(cat.id)}
+              style={activeFilter === cat.id ? design.lightColor : {}}
+              className="border-gray-300 text-gray-700 hover:bg-cream-50"
+            >
+              {cat.label}
+            </Button>
+          ))}
         </div>
       </section>
 
-      {/* Projects Grid */}
       <section className="py-12 bg-white">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredProjects.map((project, index) => (
-              <div 
-                key={project.id} 
+            {filteredProjects.map((proj, idx) => (
+              <div
+                key={proj.id}
+                style={{ animationDelay: `${idx * 0.1}s` }}
                 className="group animate-fade-in"
-                style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <div className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
-                  <div 
-                    className="relative overflow-hidden cursor-pointer"
-                    onClick={() => openImageModal(project.image)}
+                <div className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+                  <div
+                    className="relative cursor-pointer overflow-hidden"
+                    onClick={() =>
+                      openImageModal(proj.coverImage, proj.gallery)
+                    }
                   >
                     <img
-                      src={project.image}
-                      alt={project.title}
+                      src={imageMap[proj.coverImage] || ''}
+                      alt={proj.title}
                       className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                      <span className="bg-white/90 text-gray-900 px-4 py-2 rounded-full text-sm font-medium">
+                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <span className="bg-white/90 text-gray-900 px-4 py-2 rounded-full text-sm">
                         לחץ להגדלה
                       </span>
                     </div>
-                    <div className="absolute top-4 right-4">
-                      <span className="bg-cream-500 text-gray-900 px-3 py-1 rounded-full text-sm font-medium">
-                        {project.year}
-                      </span>
-                    </div>
                   </div>
-                  
+
                   <div className="p-6">
-                    <div className="mb-3">
-                      <span className="text-sm font-medium text-warm-800">
-                        {categories.find(cat => cat.id === project.category)?.label} • {project.location}
-                      </span>
+                    <div className="mb-3 text-sm font-medium text-warm-800">
+                      {getCategoryLabel(proj.category)} • {proj.location}
                     </div>
-                    
-                    <h3 className="text-xl font-medium text-gray-900 mb-3 group-hover:text-cream-600 transition-colors duration-300">
-                      {project.title}
+                    <h3 className="text-xl font-medium text-gray-900 mb-3 group-hover:text-cream-600">
+                      {proj.title}
                     </h3>
-                    
                     <p className="text-gray-600 mb-4 leading-relaxed text-sm">
-                      {project.description}
+                      {proj.description}
                     </p>
-                    
-                    <div className="border-t border-gray-200 pt-4">
-                      <p className="text-sm text-gray-500">
-                        <span className="font-medium">חומרים:</span> {project.materials}
-                      </p>
+                    <div className="border-t border-gray-200 pt-4 text-sm text-gray-500">
+                      <span className="font-medium">חומרים:</span>{' '}
+                      {proj.materials}
                     </div>
                   </div>
                 </div>
@@ -288,32 +245,73 @@ const Projects = () => {
           </div>
 
           {filteredProjects.length === 0 && (
-            <div className="text-center py-16">
-              <p className="text-gray-500 text-lg">לא נמצאו פרויקטים בקטגוריה זו</p>
+            <div className="text-center py-16 text-gray-500 text-lg">
+              לא נמצאו פרויקטים בקטגוריה זו
             </div>
           )}
         </div>
       </section>
 
-      {/* Image Modal */}
       {selectedImage && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
           onClick={closeImageModal}
         >
-          <div className="relative max-w-4xl max-h-full">
+          <div
+            className="relative max-w-4xl w-full max-h-full flex flex-col items-center"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
               onClick={closeImageModal}
-              className="absolute -top-12 right-0 text-white hover:text-cream-300 transition-colors"
+              className="absolute -top-12 right-0 text-white hover:text-cream-300"
             >
               <X size={32} />
             </button>
-            <img
-              src={selectedImage}
-              alt="תמונה מוגדלת"
-              className="max-w-full max-h-full object-contain rounded-lg"
-              onClick={(e) => e.stopPropagation()}
-            />
+
+            <div className="relative w-full flex items-center justify-center">
+              <button
+                onClick={() =>
+                  setSelectedImageIndex((prev) =>
+                    prev === galleryImages.length - 1 ? 0 : prev + 1
+                  )
+                }
+                className="absolute left-0 text-white text-3xl px-4"
+                style={{ height: '100%', backgroundColor: '#0002', fontWeight: 'bold', fontSize: '2em' }}
+              >
+                ›
+              </button>
+
+              <img
+                src={galleryImages[selectedImageIndex]}
+                alt="תמונה מוגדלת"
+                className="max-h-[80vh] object-contain rounded-lg mx-auto"
+              />
+
+              <button
+                onClick={() =>
+                  setSelectedImageIndex((prev) =>
+                    prev === 0 ? galleryImages.length - 1 : prev - 1
+                  )
+                }
+                className="absolute right-0 text-white text-3xl px-4"
+                style={{ height: '100%', backgroundColor: '#0002', fontWeight: 'bold', fontSize: '2em' }}
+              >
+                ‹
+              </button>
+            </div>
+
+            <div className="mt-4 flex gap-2 overflow-x-auto">
+              {galleryImages.map((img, idx) => (
+                <img
+                  key={idx}
+                  src={img}
+                  onClick={() => setSelectedImageIndex(idx)}
+                  className={`h-16 cursor-pointer rounded border ${
+                    selectedImageIndex === idx ? 'border-white' : 'border-transparent'
+                  }`}
+                />
+              ))}
+            </div>
           </div>
         </div>
       )}

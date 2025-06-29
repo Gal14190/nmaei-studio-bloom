@@ -197,7 +197,7 @@ const ProjectGalleryManager = ({ projectId, onContentChange }: ProjectGalleryMan
                 <img
                   src={image.url}
                   alt={image.altText}
-                  className="w-full h-32 object-cover rounded mb-2"
+                  className="w-full h-32 rounded mb-2"
                 />
                 <p className="text-sm font-medium truncate">{image.title}</p>
                 <p className="text-xs text-stone-600 truncate">{image.description}</p>
@@ -217,7 +217,7 @@ const ProjectGalleryManager = ({ projectId, onContentChange }: ProjectGalleryMan
                 <img
                   src={editingImage.url}
                   alt={editingImage.altText}
-                  className="w-full h-32 object-cover rounded"
+                  className="w-full h-32 rounded"
                 />
               </div>
               <div>

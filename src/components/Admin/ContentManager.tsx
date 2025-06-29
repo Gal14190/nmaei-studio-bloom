@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Search, Edit, Eye, Lock, Plus, FileText, Home, Info, Briefcase, Phone } from 'lucide-react';
 import ContentEditor from './ContentEditor';
+import About from '@/pages/About';
 
 interface ContentManagerProps {
   onContentChange: () => void;
@@ -19,7 +20,7 @@ const ContentManager = ({ onContentChange }: ContentManagerProps) => {
   const pages = [
     {
       id: 'home',
-      name: 'Homepage',
+      name: 'עמוד הבית',
       icon: <Home className="w-4 h-4" />,
       sections: [
         { id: 'hero', name: 'Hero Section', editable: true, type: 'hero' },
@@ -29,44 +30,41 @@ const ContentManager = ({ onContentChange }: ContentManagerProps) => {
       ]
     },
     {
-      id: 'about',
-      name: 'About Page',
-      icon: <Info className="w-4 h-4" />,
-      sections: [
-        { id: 'story', name: 'Story Section', editable: true, type: 'text' },
-        { id: 'timeline', name: 'Professional Journey', editable: true, type: 'timeline' },
-        { id: 'quote', name: 'Quote Section', editable: true, type: 'quote' }
-      ]
-    },
-    {
-      id: 'services',
-      name: 'Services Page',
+      id: 'projects',
+      name: 'עמוד פרויקטים',
       icon: <Briefcase className="w-4 h-4" />,
       sections: [
-        { id: 'services-intro', name: 'Services Introduction', editable: true, type: 'text' },
-        { id: 'process', name: 'Work Process', editable: true, type: 'process' },
-        { id: 'consultation', name: 'Consultation CTA', editable: true, type: 'cta' }
+        { id: 'hero', name: 'Hero Section', editable: true, type: 'hero' },
+        { id: 'values', name: 'Values Section', editable: true, type: 'values' },
+        { id: 'quote', name: 'Quote Section', editable: true, type: 'quote' },
+        { id: 'cta', name: 'Call to Action', editable: true, type: 'cta' }
       ]
     },
     {
-      id: 'projects',
-      name: 'Projects Page',
-      icon: <Eye className="w-4 h-4" />,
+      id: 'about',
+      name: 'עמוד אודות',
+      icon: <Info className="w-4 h-4" />,
       sections: [
-        { id: 'projects-intro', name: 'Projects Introduction', editable: true, type: 'text' },
-        { id: 'project-grid', name: 'Project Grid', editable: false, type: 'dynamic' }
+        { id: 'hero', name: 'Hero Section', editable: true, type: 'hero' },
+        { id: 'values', name: 'Values Section', editable: true, type: 'values' },
+        { id: 'quote', name: 'Quote Section', editable: true, type: 'quote' },
+        { id: 'cta', name: 'Call to Action', editable: true, type: 'cta' }
       ]
     },
     {
-      id: 'contact',
-      name: 'Contact Page',
+      id: 'service',
+      name: 'עמוד שירות',
+      icon: <Info className="w-4 h-4" />,
+      sections: [
+      ]
+    },
+    {
+      id: 'contect',
+      name: 'עמוד צור קשר',
       icon: <Phone className="w-4 h-4" />,
       sections: [
-        { id: 'contact-form', name: 'Contact Form', editable: true, type: 'form' },
-        { id: 'contact-info', name: 'Contact Information', editable: true, type: 'contact' },
-        { id: 'working-hours', name: 'Working Hours', editable: true, type: 'hours' }
       ]
-    }
+    },
   ];
 
   const filteredPages = pages.filter(page => 
@@ -80,10 +78,10 @@ const ContentManager = ({ onContentChange }: ContentManagerProps) => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-light text-stone-900">Content Management</h2>
-          <p className="text-stone-600">Edit all text content across your website</p>
+          <h2 className="text-2xl font-light text-stone-900">עריכת תוכן אתר</h2>
+          <p className="text-stone-600">עריכת כל תוכן האתר</p>
         </div>
-        <div className="flex items-center space-x-3">
+        {/* <div className="flex items-center space-x-3">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-stone-400" />
             <Input
@@ -97,7 +95,7 @@ const ContentManager = ({ onContentChange }: ContentManagerProps) => {
             <Plus className="w-4 h-4 mr-2" />
             Add Section
           </Button>
-        </div>
+        </div> */}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -107,7 +105,7 @@ const ContentManager = ({ onContentChange }: ContentManagerProps) => {
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <FileText className="w-5 h-5" />
-                Pages
+                עמודים
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
@@ -164,9 +162,9 @@ const ContentManager = ({ onContentChange }: ContentManagerProps) => {
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center gap-3">
                   {pages.find(p => p.id === activePageId)?.icon}
-                  Edit: {pages.find(p => p.id === activePageId)?.name}
+                  עריכה: {pages.find(p => p.id === activePageId)?.name}
                 </CardTitle>
-                <div className="flex space-x-2">
+                {/* <div className="flex space-x-2">
                   <Button variant="outline" size="sm">
                     <Eye className="w-4 h-4 mr-2" />
                     Preview
@@ -174,10 +172,10 @@ const ContentManager = ({ onContentChange }: ContentManagerProps) => {
                   <Button size="sm" className="bg-green-600 hover:bg-green-700">
                     Save Changes
                   </Button>
-                </div>
+                </div> */}
               </div>
               <div className="text-sm text-stone-600">
-                Now editing all content blocks for this page. All previously locked sections are now fully editable.
+                עריכת העמוד
               </div>
             </CardHeader>
             <CardContent>

@@ -1,16 +1,40 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Lock } from 'lucide-react';
 
+import Design from '../design';
+
 interface AdminLoginProps {
   onLogin: (username: string, password: string) => boolean;
 }
 
 const AdminLogin = ({ onLogin }: AdminLoginProps) => {
+  const [design, setDesign] = useState({
+    darkColor: { backgroundColor: '#111827' },
+    lightColor: { backgroundColor: '#faf9f7' },
+  });
+
+  const [isLoadings, setIsLoadings] = useState(true);
+
+  useEffect(() => {
+    const fetchDesign = async () => {
+      try{
+        const result = await Design(); // כאן מחכים לתשובה
+        setDesign(result); // שמים את התוצאה ב־state
+      } catch {
+        console.error("error loading design");
+      } finally {
+        setIsLoadings(false)
+      }
+    };
+
+    fetchDesign();
+  }, []);
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -30,8 +54,10 @@ const AdminLogin = ({ onLogin }: AdminLoginProps) => {
     setIsLoading(false);
   };
 
+  if(isLoadings) return <span></span>
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-beige-50 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-beige-50 p-4" style={design.lightColor}>
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">

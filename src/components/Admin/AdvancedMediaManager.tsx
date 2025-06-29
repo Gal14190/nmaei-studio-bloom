@@ -460,7 +460,7 @@ const AssetCard = ({
           <img 
             src={asset.thumbnail} 
             alt={asset.altText || asset.title}
-            className="w-full h-full object-cover"
+            className="w-full h-full"
           />
         ) : (
           <Image className="w-12 h-12 text-stone-400" />
@@ -518,7 +518,7 @@ const AssetListItem = ({
           <img 
             src={asset.thumbnail} 
             alt={asset.altText || asset.title}
-            className="w-full h-full object-cover rounded"
+            className="w-full h-full rounded"
           />
         ) : (
           <Image className="w-8 h-8 text-stone-400" />

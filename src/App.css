@@ -26,7 +26,13 @@
     transform: rotate(360deg);
   }
 }
-
+.g {
+  color: #cad2c5;
+  color: #ece4db;
+  color: #f5ebe0;
+  color: #e3d5ca;
+  color: #b7b7a4;
+}
 @media (prefers-reduced-motion: no-preference) {
   a:nth-of-type(2) .logo {
     animation: logo-spin infinite 20s linear;

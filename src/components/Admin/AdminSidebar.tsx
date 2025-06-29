@@ -13,7 +13,7 @@ import {
   PaletteIcon
 } from 'lucide-react';
 
-type SidebarSection = 'media' | 'advanced-media' | 'categories' | 'pages' | 'dynamic-pages' | 'projects' | 'content' | 'settings' | 'site-settings' | 'site-wide';
+type SidebarSection = 'media' | 'advanced-media' | 'categories' | 'pages' | 'messages' | 'projects' | 'content' | 'settings' | 'site-settings' | 'site-wide';
 
 interface AdminSidebarProps {
   activeSection: SidebarSection;
@@ -23,71 +23,71 @@ interface AdminSidebarProps {
 const AdminSidebar = ({ activeSection, onSectionChange }: AdminSidebarProps) => {
   const sections = [
     {
-      id: 'dynamic-pages' as SidebarSection,
-      label: 'Page Manager',
+      id: 'messages' as SidebarSection,
+      label: 'הודעות משתמשים',
       icon: FolderOpenIcon,
-      description: 'Create & manage all pages'
-    },
-    {
-      id: 'content' as SidebarSection,
-      label: 'Content Editor',
-      icon: EditIcon,
-      description: 'Edit all text content'
-    },
-    {
-      id: 'projects' as SidebarSection,
-      label: 'Projects',
-      icon: LayoutGridIcon,
-      description: 'Manage portfolio projects'
-    },
-    {
-      id: 'advanced-media' as SidebarSection,
-      label: 'Media Library',
-      icon: ImageIcon,
-      description: 'Advanced media management'
-    },
-    {
-      id: 'site-wide' as SidebarSection,
-      label: 'Site Settings',
-      icon: GlobeIcon,
-      description: 'Global site configuration'
-    },
-    {
-      id: 'media' as SidebarSection,
-      label: 'Basic Media',
-      icon: ImageIcon,
-      description: 'Simple media upload'
-    },
-    {
-      id: 'pages' as SidebarSection,
-      label: 'Page Editor',
-      icon: FileTextIcon,
-      description: 'Basic page structure'
+      description: 'הודעות משתמשים'
     },
     {
       id: 'categories' as SidebarSection,
-      label: 'Categories',
+      label: 'קטגוריות פרויקטים',
       icon: FolderIcon,
-      description: 'Organize content'
+      description: 'ארגון לפי קטגוריות'
     },
     {
-      id: 'site-settings' as SidebarSection,
-      label: 'Legacy Settings',
-      icon: SettingsIcon,
-      description: 'Legacy contact & social'
+      id: 'projects' as SidebarSection,
+      label: 'פרויקטים',
+      icon: LayoutGridIcon,
+      description: 'ניהול הפרויקטים'
     },
+    {
+      id: 'content' as SidebarSection,
+      label: 'תוכן אתר',
+      icon: EditIcon,
+      description: 'עריכת תוכן האתר'
+    },
+    // {
+    //   id: 'advanced-media' as SidebarSection,
+    //   label: 'Media Library',
+    //   icon: ImageIcon,
+    //   description: 'Advanced media management'
+    // },
+    {
+      id: 'site-wide' as SidebarSection,
+      label: 'הגדרות אתר',
+      icon: GlobeIcon,
+      description: 'הגדרות אתר כלליות'
+    },
+    // {
+    //   id: 'media' as SidebarSection,
+    //   label: 'Basic Media',
+    //   icon: ImageIcon,
+    //   description: 'Simple media upload'
+    // },
+    // {
+    //   id: 'pages' as SidebarSection,
+    //   label: 'Page Editor',
+    //   icon: FileTextIcon,
+    //   description: 'Basic page structure'
+    // },
+    // {
+    //   id: 'site-settings' as SidebarSection,
+    //   label: 'Legacy Settings',
+    //   icon: SettingsIcon,
+    //   description: 'Legacy contact & social'
+    // },
     {
       id: 'settings' as SidebarSection,
-      label: 'Design Settings',
+      label: 'הגדרות עיצוב',
       icon: PaletteIcon,
-      description: 'Customize appearance'
+      description: 'עיצוב האתר'
     }
   ];
 
   return (
     <aside className="w-64 bg-white border-r border-stone-200 h-full">
       <div className="p-6">
-        <h2 className="text-lg font-medium text-stone-900 mb-6">CMS Dashboard</h2>
+        <h2 className="text-lg font-medium text-stone-900 mb-6">דשבורד ניהול</h2>
         <nav className="space-y-2">
           {sections.map((section) => {
             const Icon = section.icon;

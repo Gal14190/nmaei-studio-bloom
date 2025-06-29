@@ -221,7 +221,7 @@ const DynamicPageManager = ({ onContentChange }: DynamicPageManagerProps) => {
                   <img 
                     src={page.featuredImage} 
                     alt={page.title}
-                    className="w-full h-32 object-cover rounded"
+                    className="w-full h-32 rounded"
                   />
                 )}
                 <p className="text-sm text-stone-600 line-clamp-2">{page.seoDescription}</p>
