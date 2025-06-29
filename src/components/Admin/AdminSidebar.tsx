@@ -1,87 +1,74 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { 
-  ImageIcon, 
-  FolderIcon, 
-  FileTextIcon, 
-  SettingsIcon, 
-  LayoutGridIcon,
-  GlobeIcon,
-  EditIcon,
+import {
   FolderOpenIcon,
-  PaletteIcon
+  FolderIcon,
+  LayoutGridIcon,
+  EditIcon,
+  GlobeIcon,
+  PaletteIcon,
 } from 'lucide-react';
 
-type SidebarSection = 'media' | 'advanced-media' | 'categories' | 'pages' | 'messages' | 'projects' | 'content' | 'settings' | 'site-settings' | 'site-wide';
+type SidebarSection =
+  | 'media'
+  | 'advanced-media'
+  | 'categories'
+  | 'pages'
+  | 'messages'
+  | 'projects'
+  | 'content'
+  | 'settings'
+  | 'site-settings'
+  | 'site-wide';
 
 interface AdminSidebarProps {
   activeSection: SidebarSection;
   onSectionChange: (section: SidebarSection) => void;
 }
 
-const AdminSidebar = ({ activeSection, onSectionChange }: AdminSidebarProps) => {
-  const sections = [
+const AdminSidebar: React.FC<AdminSidebarProps> = ({ activeSection, onSectionChange }) => {
+  const sections: {
+    id: SidebarSection;
+    label: string;
+    icon: React.ElementType;
+    description: string;
+  }[] = [
     {
-      id: 'messages' as SidebarSection,
+      id: 'messages',
       label: 'הודעות משתמשים',
       icon: FolderOpenIcon,
-      description: 'הודעות משתמשים'
+      description: 'הודעות משתמשים',
     },
     {
-      id: 'categories' as SidebarSection,
+      id: 'categories',
       label: 'קטגוריות פרויקטים',
       icon: FolderIcon,
-      description: 'ארגון לפי קטגוריות'
+      description: 'ארגון לפי קטגוריות',
     },
     {
-      id: 'projects' as SidebarSection,
+      id: 'projects',
       label: 'פרויקטים',
       icon: LayoutGridIcon,
-      description: 'ניהול הפרויקטים'
+      description: 'ניהול הפרויקטים',
     },
     {
-      id: 'content' as SidebarSection,
+      id: 'content',
       label: 'תוכן אתר',
       icon: EditIcon,
-      description: 'עריכת תוכן האתר'
+      description: 'עריכת תוכן האתר',
     },
-    // {
-    //   id: 'advanced-media' as SidebarSection,
-    //   label: 'Media Library',
-    //   icon: ImageIcon,
-    //   description: 'Advanced media management'
-    // },
     {
-      id: 'site-wide' as SidebarSection,
+      id: 'site-wide',
       label: 'הגדרות אתר',
       icon: GlobeIcon,
-      description: 'הגדרות אתר כלליות'
+      description: 'הגדרות אתר כלליות',
     },
-    // {
-    //   id: 'media' as SidebarSection,
-    //   label: 'Basic Media',
-    //   icon: ImageIcon,
-    //   description: 'Simple media upload'
-    // },
-    // {
-    //   id: 'pages' as SidebarSection,
-    //   label: 'Page Editor',
-    //   icon: FileTextIcon,
-    //   description: 'Basic page structure'
-    // },
-    // {
-    //   id: 'site-settings' as SidebarSection,
-    //   label: 'Legacy Settings',
-    //   icon: SettingsIcon,
-    //   description: 'Legacy contact & social'
-    // },
     {
-      id: 'settings' as SidebarSection,
+      id: 'settings',
       label: 'הגדרות עיצוב',
       icon: PaletteIcon,
-      description: 'עיצוב האתר'
-    }
+      description: 'עיצוב האתר',
+    },
   ];
 
   return (
@@ -92,15 +79,15 @@ const AdminSidebar = ({ activeSection, onSectionChange }: AdminSidebarProps) => 
           {sections.map((section) => {
             const Icon = section.icon;
             const isActive = activeSection === section.id;
-            
+
             return (
               <Button
                 key={section.id}
-                variant={isActive ? "default" : "ghost"}
+                variant={isActive ? 'default' : 'ghost'}
                 className={`w-full justify-start text-left h-auto p-3 ${
-                  isActive 
-                    ? "bg-stone-900 text-white hover:bg-stone-800" 
-                    : "text-stone-700 hover:bg-stone-100"
+                  isActive
+                    ? 'bg-stone-900 text-white hover:bg-stone-800'
+                    : 'text-stone-700 hover:bg-stone-100'
                 }`}
                 onClick={() => onSectionChange(section.id)}
               >
@@ -108,9 +95,11 @@ const AdminSidebar = ({ activeSection, onSectionChange }: AdminSidebarProps) => 
                   <Icon className="w-5 h-5 mt-0.5 flex-shrink-0" />
                   <div className="min-w-0 flex-1">
                     <div className="font-medium">{section.label}</div>
-                    <div className={`text-xs ${
-                      isActive ? "text-stone-300" : "text-stone-500"
-                    }`}>
+                    <div
+                      className={`text-xs ${
+                        isActive ? 'text-stone-300' : 'text-stone-500'
+                      }`}
+                    >
                       {section.description}
                     </div>
                   </div>

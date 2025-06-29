@@ -7,7 +7,7 @@ interface FileReadersProps {
   setFormData: React.Dispatch<React.SetStateAction<any>>;
 }
 
-// דחיסת תמונה
+// פונקציה לדחיסת תמונה לקנבס
 const compressImage = (
   file: File,
   quality: number = 0.7,
@@ -21,12 +21,15 @@ const compressImage = (
     reader.onload = (event) => {
       const img = new Image();
       img.src = event.target?.result as string;
+
       img.onload = () => {
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
-        if (!ctx) return reject(new Error("Canvas error"));
+        if (!ctx) return reject(new Error("Canvas context unavailable"));
 
         let { width, height } = img;
+
+        // התאמת גודל התמונה לגבולות מקסימליים
         if (width > maxWidth || height > maxHeight) {
           if (width > height) {
             height *= maxWidth / width;
@@ -40,10 +43,13 @@ const compressImage = (
         canvas.width = width;
         canvas.height = height;
         ctx.drawImage(img, 0, 0, width, height);
-        resolve(canvas.toDataURL("image/jpeg", quality));
+        const compressedDataUrl = canvas.toDataURL("image/jpeg", quality);
+        resolve(compressedDataUrl);
       };
+
       img.onerror = reject;
     };
+
     reader.onerror = reject;
   });
 };
@@ -51,6 +57,7 @@ const compressImage = (
 const FileReaders: React.FC<FileReadersProps> = ({ setImageSrc, setFormData }) => {
   const [images, setImages] = useState<string[]>([]);
 
+  // שמירת תמונה למסד הנתונים
   const saveImage = async (compressedImage: string) => {
     try {
       const docRef = await addDoc(collection(db, "gallery"), {
@@ -58,11 +65,12 @@ const FileReaders: React.FC<FileReadersProps> = ({ setImageSrc, setFormData }) =
       });
       return { id: docRef.id, url: compressedImage };
     } catch (err) {
-      console.error("שגיאה בשמירה:", err);
+      console.error("שגיאה בשמירת התמונה:", err);
       return null;
     }
   };
 
+  // טיפול בבחירת קובץ
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (!files || files.length === 0) return;
@@ -80,15 +88,15 @@ const FileReaders: React.FC<FileReadersProps> = ({ setImageSrc, setFormData }) =
           newGalleryIds.push(saved.id);
         }
       } catch (err) {
-        console.error("שגיאה בדחיסה:", err);
+        console.error("שגיאה בדחיסת התמונה:", err);
       }
     }
 
     if (newImageUrls.length > 0) {
-      setImageSrc(newImageUrls[0]); // רק להצגה
+      setImageSrc(newImageUrls[0]); // תמונת תצוגה ראשית
       setFormData((prev: any) => ({
         ...prev,
-        coverImage: newGalleryIds[0],      // רק הראשונה בתור תמונה ראשית
+        coverImage: newGalleryIds[0], // ראשונה כתמונת שער
         gallery: [...(prev.gallery || []), ...newGalleryIds.slice(1)], // השאר לגלריה
       }));
       setImages((prev) => [...prev, ...newImageUrls]);

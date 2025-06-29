@@ -1,12 +1,27 @@
-
 import React, { useState } from 'react';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger
+} from '@/components/ui/tabs';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Save, Phone, Instagram, Facebook, Mail } from 'lucide-react';
+import {
+  Save,
+  Phone,
+  Instagram,
+  Facebook,
+  Mail
+} from 'lucide-react';
 
 interface SiteSettingsProps {
   onContentChange: () => void;
@@ -17,20 +32,20 @@ const SiteSettings = ({ onContentChange }: SiteSettingsProps) => {
     contact: {
       whatsapp: {
         number: '972532731575',
-        message: 'שלום, אני מעוניין בייעוץ עיצוב'
+        message: 'שלום, אני מעוניין בייעוץ עיצוב',
       },
       email: 'Nofarmizr3008@gmail.com',
-      phone: '0523-273-1575'
+      phone: '0523-273-1575',
     },
     social: {
       instagram: 'https://instagram.com/nmaei_studio',
-      facebook: 'https://facebook.com/nmaei.studio'
+      facebook: 'https://facebook.com/nmaei.studio',
     },
     company: {
       name: 'NMAEI Studio',
       tagline: 'Architecture | Interior Design',
       address: 'אזור המרכז, ישראל',
-      description: 'סטודיו לאדריכלות ועיצוב פנים - תכנון חכם, עיצוב מינימליסטי וחם'
+      description: 'סטודיו לאדריכלות ועיצוב פנים - תכנון חכם, עיצוב מינימליסטי וחם',
     },
     hero: {
       title: 'N M A E I',
@@ -38,25 +53,33 @@ const SiteSettings = ({ onContentChange }: SiteSettingsProps) => {
       tagline: 'לראות | להבין | להרגיש',
       description: 'תכנון שמתרגם חלומות ומדבר עם השטח',
       ctaButton: 'צפה בפרויקטים',
-      contactButton: 'צור קשר'
-    }
+      contactButton: 'צור קשר',
+    },
   });
 
-  const handleSettingChange = (category: string, field: string, value: string, subfield?: string) => {
-    setSettings(prev => ({
+  const handleSettingChange = (
+    category: string,
+    field: string,
+    value: string,
+    subfield?: string
+  ) => {
+    setSettings((prev) => ({
       ...prev,
       [category]: {
         ...prev[category as keyof typeof prev],
-        ...(subfield ? {
-          [field]: {
-            ...prev[category as keyof typeof prev][field as keyof any],
-            [subfield]: value
-          }
-        } : {
-          [field]: value
-        })
-      }
+        ...(subfield
+          ? {
+              [field]: {
+                ...prev[category as keyof typeof prev][field as keyof any],
+                [subfield]: value,
+              },
+            }
+          : {
+              [field]: value,
+            }),
+      },
     }));
+
     onContentChange();
   };
 
@@ -64,7 +87,9 @@ const SiteSettings = ({ onContentChange }: SiteSettingsProps) => {
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-light text-stone-900">Site Settings</h2>
-        <p className="text-stone-600">Manage global site settings, contact information, and social links</p>
+        <p className="text-stone-600">
+          Manage global site settings, contact information, and social links
+        </p>
       </div>
 
       <Tabs defaultValue="contact" className="w-full">
@@ -75,6 +100,7 @@ const SiteSettings = ({ onContentChange }: SiteSettingsProps) => {
           <TabsTrigger value="hero">Hero Section</TabsTrigger>
         </TabsList>
 
+        {/* --- Contact Info Tab --- */}
         <TabsContent value="contact">
           <Card>
             <CardHeader>
@@ -88,38 +114,46 @@ const SiteSettings = ({ onContentChange }: SiteSettingsProps) => {
                 <Label>WhatsApp Number</Label>
                 <Input
                   value={settings.contact.whatsapp.number}
-                  onChange={(e) => handleSettingChange('contact', 'whatsapp', e.target.value, 'number')}
-                  placeholder="972532731575"
+                  onChange={(e) =>
+                    handleSettingChange('contact', 'whatsapp', e.target.value, 'number')
+                  }
                 />
               </div>
+
               <div>
                 <Label>הודעת ווצאפ</Label>
                 <Textarea
                   value={settings.contact.whatsapp.message}
-                  onChange={(e) => handleSettingChange('contact', 'whatsapp', e.target.value, 'message')}
-                  placeholder="Default WhatsApp message"
+                  onChange={(e) =>
+                    handleSettingChange('contact', 'whatsapp', e.target.value, 'message')
+                  }
                 />
               </div>
+
               <div>
                 <Label>Email Address</Label>
                 <Input
                   value={settings.contact.email}
-                  onChange={(e) => handleSettingChange('contact', 'email', e.target.value)}
-                  placeholder="contact@nmaei.com"
+                  onChange={(e) =>
+                    handleSettingChange('contact', 'email', e.target.value)
+                  }
                 />
               </div>
+
               <div>
                 <Label>Phone Number</Label>
                 <Input
                   value={settings.contact.phone}
-                  onChange={(e) => handleSettingChange('contact', 'phone', e.target.value)}
-                  placeholder="053-273-1575"
+                  onChange={(e) =>
+                    handleSettingChange('contact', 'phone', e.target.value)
+                  }
                 />
               </div>
             </CardContent>
           </Card>
         </TabsContent>
 
+        {/* --- Social Links Tab --- */}
         <TabsContent value="social">
           <Card>
             <CardHeader>
@@ -133,22 +167,26 @@ const SiteSettings = ({ onContentChange }: SiteSettingsProps) => {
                 <Label>Instagram URL</Label>
                 <Input
                   value={settings.social.instagram}
-                  onChange={(e) => handleSettingChange('social', 'instagram', e.target.value)}
-                  placeholder="https://instagram.com/nmaei_studio"
+                  onChange={(e) =>
+                    handleSettingChange('social', 'instagram', e.target.value)
+                  }
                 />
               </div>
+
               <div>
                 <Label>Facebook URL</Label>
                 <Input
                   value={settings.social.facebook}
-                  onChange={(e) => handleSettingChange('social', 'facebook', e.target.value)}
-                  placeholder="https://facebook.com/nmaei.studio"
+                  onChange={(e) =>
+                    handleSettingChange('social', 'facebook', e.target.value)
+                  }
                 />
               </div>
             </CardContent>
           </Card>
         </TabsContent>
 
+        {/* --- Company Info Tab --- */}
         <TabsContent value="company">
           <Card>
             <CardHeader>
@@ -159,38 +197,46 @@ const SiteSettings = ({ onContentChange }: SiteSettingsProps) => {
                 <Label>Company Name</Label>
                 <Input
                   value={settings.company.name}
-                  onChange={(e) => handleSettingChange('company', 'name', e.target.value)}
-                  placeholder="NMAEI Studio"
+                  onChange={(e) =>
+                    handleSettingChange('company', 'name', e.target.value)
+                  }
                 />
               </div>
+
               <div>
                 <Label>Tagline</Label>
                 <Input
                   value={settings.company.tagline}
-                  onChange={(e) => handleSettingChange('company', 'tagline', e.target.value)}
-                  placeholder="Architecture | Interior Design"
+                  onChange={(e) =>
+                    handleSettingChange('company', 'tagline', e.target.value)
+                  }
                 />
               </div>
+
               <div>
                 <Label>Address</Label>
                 <Textarea
                   value={settings.company.address}
-                  onChange={(e) => handleSettingChange('company', 'address', e.target.value)}
-                  placeholder="Company address"
+                  onChange={(e) =>
+                    handleSettingChange('company', 'address', e.target.value)
+                  }
                 />
               </div>
+
               <div>
                 <Label>Description</Label>
                 <Textarea
                   value={settings.company.description}
-                  onChange={(e) => handleSettingChange('company', 'description', e.target.value)}
-                  placeholder="Company description"
+                  onChange={(e) =>
+                    handleSettingChange('company', 'description', e.target.value)
+                  }
                 />
               </div>
             </CardContent>
           </Card>
         </TabsContent>
 
+        {/* --- Hero Section Tab --- */}
         <TabsContent value="hero">
           <Card>
             <CardHeader>
@@ -201,49 +247,59 @@ const SiteSettings = ({ onContentChange }: SiteSettingsProps) => {
                 <Label>Main Title</Label>
                 <Input
                   value={settings.hero.title}
-                  onChange={(e) => handleSettingChange('hero', 'title', e.target.value)}
-                  placeholder="N M A E I"
+                  onChange={(e) =>
+                    handleSettingChange('hero', 'title', e.target.value)
+                  }
                 />
               </div>
+
               <div>
                 <Label>Subtitle</Label>
                 <Input
                   value={settings.hero.subtitle}
-                  onChange={(e) => handleSettingChange('hero', 'subtitle', e.target.value)}
-                  placeholder="Architecture | Interior Design"
+                  onChange={(e) =>
+                    handleSettingChange('hero', 'subtitle', e.target.value)
+                  }
                 />
               </div>
+
               <div>
                 <Label>Hebrew Tagline</Label>
                 <Input
                   value={settings.hero.tagline}
-                  onChange={(e) => handleSettingChange('hero', 'tagline', e.target.value)}
-                  placeholder="לראות | להבין | להרגיש"
+                  onChange={(e) =>
+                    handleSettingChange('hero', 'tagline', e.target.value)
+                  }
                 />
               </div>
+
               <div>
                 <Label>Description</Label>
                 <Textarea
                   value={settings.hero.description}
-                  onChange={(e) => handleSettingChange('hero', 'description', e.target.value)}
-                  placeholder="Hero description"
+                  onChange={(e) =>
+                    handleSettingChange('hero', 'description', e.target.value)
+                  }
                 />
               </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>Primary Button Text</Label>
                   <Input
                     value={settings.hero.ctaButton}
-                    onChange={(e) => handleSettingChange('hero', 'ctaButton', e.target.value)}
-                    placeholder="צפה בפרויקטים"
+                    onChange={(e) =>
+                      handleSettingChange('hero', 'ctaButton', e.target.value)
+                    }
                   />
                 </div>
                 <div>
                   <Label>Contact Button Text</Label>
                   <Input
                     value={settings.hero.contactButton}
-                    onChange={(e) => handleSettingChange('hero', 'contactButton', e.target.value)}
-                    placeholder="צור קשר"
+                    onChange={(e) =>
+                      handleSettingChange('hero', 'contactButton', e.target.value)
+                    }
                   />
                 </div>
               </div>

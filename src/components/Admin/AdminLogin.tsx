@@ -23,8 +23,8 @@ const AdminLogin = ({ onLogin }: AdminLoginProps) => {
   useEffect(() => {
     const fetchDesign = async () => {
       try{
-        const result = await Design(); // כאן מחכים לתשובה
-        setDesign(result); // שמים את התוצאה ב־state
+        const result = await Design(); 
+        setDesign(result); 
       } catch {
         console.error("error loading design");
       } finally {

@@ -7,6 +7,7 @@ import {
   Timestamp,
 } from 'firebase/firestore';
 import { db } from '@/firebaseConfig';
+
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
 import { Trash2 } from 'lucide-react';
@@ -20,15 +21,16 @@ interface ContactMessage {
   createdAt?: Timestamp;
 }
 
-const ContactMessages = () => {
+const ContactMessages: React.FC = () => {
   const [messages, setMessages] = useState<ContactMessage[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Fetch messages on mount
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, 'contactMessages'));
-        const data: ContactMessage[] = querySnapshot.docs.map((docSnap) => ({
+        const snapshot = await getDocs(collection(db, 'contactMessages'));
+        const data = snapshot.docs.map((docSnap) => ({
           id: docSnap.id,
           ...docSnap.data(),
         })) as ContactMessage[];
@@ -49,11 +51,13 @@ const ContactMessages = () => {
   }, []);
 
   const handleDelete = async (id: string) => {
-    if (!confirm('האם למחוק את ההודעה לצמיתות?')) return;
+    const confirmDelete = confirm('האם למחוק את ההודעה לצמיתות?');
+    if (!confirmDelete) return;
 
     try {
       await deleteDoc(doc(db, 'contactMessages', id));
       setMessages((prev) => prev.filter((m) => m.id !== id));
+
       toast({
         title: 'נמחק בהצלחה',
         description: 'ההודעה הוסרה מהמערכת',
@@ -78,10 +82,10 @@ const ContactMessages = () => {
 
   return (
     <div className="p-6 space-y-6">
-      <h2 className="text-2xl font-semibold">הודעות שהתקבלו</h2>
+      <h2 className="text-2xl font-light text-stone-900">הודעות שהתקבלו</h2>
 
-      <div className="overflow-x-auto border rounded">
-        <table className="min-w-full text-sm rtl text-right border-collapse">
+      <div className="overflow-x-auto border rounded-lg">
+        <table className="min-w-full text-sm text-right border-collapse">
           <thead className="bg-gray-100">
             <tr>
               <th className="px-4 py-2 border">שם</th>

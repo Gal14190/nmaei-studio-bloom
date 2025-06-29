@@ -19,7 +19,8 @@ const HeroSection = () => {
           const data = docSnap.data();
           const contentBlocks = data.contentBlocks || [];
 
-          const getBlock = (id: string) => contentBlocks.find((b: any) => b.id === id)?.content;
+          const getBlock = (id: string) =>
+            contentBlocks.find((b: any) => b.id === id)?.content;
 
           setHeroData({
             image: getBlock('hero-image')?.url,
@@ -40,17 +41,17 @@ const HeroSection = () => {
   }, []);
 
   if (loading) {
-    return <div className="text-center p-6 text-white"></div>;
+    return <div className="text-center p-6 text-white" />;
   }
 
-  heroData.image = "/lovable-uploads/fallback-video.mp4"
-  const isVideo = heroData?.image?.endsWith('.mp4');
+  // ברירת מחדל במקרה שאין תמונה
+  const mediaUrl = heroData?.image || '/lovable-uploads/fallback-video.mp4';
+  const isVideo = mediaUrl.endsWith('.mp4');
   const fallbackImage = '/lovable-uploads/0a45c4d2-657f-4646-99b2-d0f432254035.png';
-  const fallbackVideo = '/lovable-uploads/fallback-video.mp4';
 
   return (
     <section className="relative h-screen flex items-center justify-center overflow-hidden">
-      {/* Background media */}
+      {/* Background Media */}
       {isVideo ? (
         <video
           className="absolute inset-0 w-full h-full object-cover"
@@ -59,13 +60,13 @@ const HeroSection = () => {
           loop
           playsInline
         >
-          <source src={fallbackVideo} type="video/mp4" />
+          <source src={mediaUrl} type="video/mp4" />
           הדפדפן שלך לא תומך בתגית וידאו.
         </video>
       ) : (
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url(${fallbackImage})` }}
+          style={{ backgroundImage: `url(${mediaUrl || fallbackImage})` }}
         />
       )}
 
@@ -75,12 +76,12 @@ const HeroSection = () => {
       {/* Content */}
       <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
         <div className="animate-fade-up">
-          {/* Logo/Brand */}
+          {/* Logo / Brand */}
           <div className="mb-8">
             <img
               alt="NMAEI Logo"
-              className="w-24 h-24 md:w-32 md:h-32 mx-auto mb-6 animate-scale-in"
               src="/lovable-uploads/f911b76f-cd03-4ecc-ace0-40a934fa63db.png"
+              className="w-24 h-24 md:w-32 md:h-32 mx-auto mb-6 animate-scale-in"
             />
             <h1 className="hero-text text-white text-shadow-lg mb-2 text-7xl py-[23px]">
               {heroData?.title || 'M I N É A'}
@@ -102,8 +103,8 @@ const HeroSection = () => {
 
           {/* CTA Buttons */}
           <div
-            style={{ animationDelay: '0.6s', display: 'block' }}
             className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in"
+            style={{ animationDelay: '0.6s' }}
           >
             <Button
               asChild
@@ -116,6 +117,7 @@ const HeroSection = () => {
                 <ArrowLeft size={18} className="rotate-180" />
               </Link>
             </Button>
+
             <Button
               asChild
               variant="outline"
@@ -123,7 +125,7 @@ const HeroSection = () => {
               className="border-2 border-white text-white hover:bg-white hover:text-gray-900 font-medium transition-all duration-300 bg-white/10 backdrop-blur-sm"
               style={{ width: '15vh' }}
             >
-              <Link to="/contact" className="text-white hover:text-gray-900 flex items-center justify-center">
+              <Link to="/contact" className="flex items-center justify-center">
                 צור קשר
               </Link>
             </Button>
@@ -134,7 +136,7 @@ const HeroSection = () => {
       {/* Scroll Indicator */}
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
         <div className="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center">
-          <div className="w-1 h-3 bg-white/50 rounded-full mt-2 animate-pulse"></div>
+          <div className="w-1 h-3 bg-white/50 rounded-full mt-2 animate-pulse" />
         </div>
       </div>
     </section>

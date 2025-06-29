@@ -1,7 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
+import {
+  LogOut, Save, RotateCcw, Eye, Bell, Search
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { LogOut, Save, RotateCcw, Eye, Bell, Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/hooks/use-toast';
 import AdminSidebar from './AdminSidebar';
@@ -21,66 +22,59 @@ interface AdminDashboardProps {
   onLogout: () => void;
 }
 
-type ActiveSection = 'media' | 'advanced-media' | 'categories' | 'pages' | 'messages' | 'projects' | 'content' | 'settings' | 'site-settings' | 'site-wide';
+type ActiveSection =
+  | 'media'
+  | 'advanced-media'
+  | 'categories'
+  | 'pages'
+  | 'messages'
+  | 'projects'
+  | 'content'
+  | 'settings'
+  | 'site-settings'
+  | 'site-wide';
 
-const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
+const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   const [activeSection, setActiveSection] = useState<ActiveSection>('messages');
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [autoSaveEnabled, setAutoSaveEnabled] = useState(true);
+  const [autoSaveEnabled] = useState(true);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
 
-  // Auto-save functionality
+  // Auto-save
   useEffect(() => {
     if (hasUnsavedChanges && autoSaveEnabled) {
-      const autoSaveTimer = setTimeout(() => {
-        handleSave(true);
-      }, 60000); // Auto-save every 60 seconds
-
-      return () => clearTimeout(autoSaveTimer);
+      const timer = setTimeout(() => handleSave(true), 60000);
+      return () => clearTimeout(timer);
     }
   }, [hasUnsavedChanges, autoSaveEnabled]);
-
-  // // Keyboard shortcuts
-  // useEffect(() => {
-  //   const handleKeyDown = (e: KeyboardEvent) => {
-  //     if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-  //       e.preventDefault();
-  //       handleSave();
-  //     }
-  //   };
-
-  //   window.addEventListener('keydown', handleKeyDown);
-  //   return () => window.removeEventListener('keydown', handleKeyDown);
-  // }, []);
 
   const handleSave = (isAutoSave = false) => {
     setHasUnsavedChanges(false);
     setLastSaved(new Date());
-    
+
     toast({
-      title: isAutoSave ? "Auto-saved" : "Changes saved",
-      description: isAutoSave ? "Your work has been automatically saved" : "All changes have been saved successfully",
+      title: isAutoSave ? 'Auto-saved' : 'Changes saved',
+      description: isAutoSave
+        ? 'Your work has been automatically saved'
+        : 'All changes have been saved successfully',
     });
   };
 
   const handleReset = () => {
-    if (confirm('Are you sure you want to reset to default settings? This cannot be undone.')) {
+    if (confirm('Are you sure you want to reset to default settings?')) {
       setHasUnsavedChanges(false);
       toast({
-        title: "Settings reset",
-        description: "All settings have been reset to default values",
+        title: 'Settings reset',
+        description: 'All settings have been reset to default values',
       });
     }
   };
 
-  const handlePreview = () => {
-    window.open('/', '_blank');
-  };
+  const handlePreview = () => window.open('/', '_blank');
 
-  const getSectionTitle = () => {
+  const getSectionTitle = (): string => {
     switch (activeSection) {
-      // case 'dynamic-pages': return 'Dynamic Page Management';
       case 'advanced-media': return 'Advanced Media Library';
       case 'media': return 'Basic Media Manager';
       case 'categories': return 'Category Management';
@@ -95,29 +89,19 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
   };
 
   const renderActiveSection = () => {
+    const onContentChange = () => setHasUnsavedChanges(true);
     switch (activeSection) {
-      // case 'dynamic-pages':
-        // return <DynamicPageManager onContentChange={() => setHasUnsavedChanges(true)} />;
-      case 'messages':
-        return <ContactMessages />;
-      case 'media':
-        return <MediaManager onContentChange={() => setHasUnsavedChanges(true)} />;
-      case 'categories':
-        return <CategoryEditor onContentChange={() => setHasUnsavedChanges(true)} />;
-      case 'pages':
-        return <EnhancedPageEditor onContentChange={() => setHasUnsavedChanges(true)} />;
-      case 'projects':
-        return <ProjectManager onContentChange={() => setHasUnsavedChanges(true)} />;
-      case 'content':
-        return <ContentManager onContentChange={() => setHasUnsavedChanges(true)} />;
-      case 'site-settings':
-        return <SiteSettings onContentChange={() => setHasUnsavedChanges(true)} />;
-      case 'site-wide':
-        return <SiteWideSettings onContentChange={() => setHasUnsavedChanges(true)} />;
-      case 'settings':
-        return <DesignSettings onContentChange={() => setHasUnsavedChanges(true)} />;
-      default:
-        return <DynamicPageManager onContentChange={() => setHasUnsavedChanges(true)} />;
+      case 'messages': return <ContactMessages />;
+      case 'media': return <MediaManager onContentChange={onContentChange} />;
+      case 'advanced-media': return <AdvancedMediaManager onContentChange={onContentChange} />;
+      case 'categories': return <CategoryEditor onContentChange={onContentChange} />;
+      case 'pages': return <EnhancedPageEditor onContentChange={onContentChange} />;
+      case 'projects': return <ProjectManager onContentChange={onContentChange} />;
+      case 'content': return <ContentManager onContentChange={onContentChange} />;
+      case 'site-settings': return <SiteSettings onContentChange={onContentChange} />;
+      case 'site-wide': return <SiteWideSettings onContentChange={onContentChange} />;
+      case 'settings': return <DesignSettings onContentChange={onContentChange} />;
+      default: return <DynamicPageManager onContentChange={onContentChange} />;
     }
   };
 
@@ -126,6 +110,7 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
       {/* Top Bar */}
       <div className="bg-white border-b border-stone-200 px-6 py-4 sticky top-0 z-40">
         <div className="flex items-center justify-between">
+          {/* Title & Subtitle */}
           <div className="flex items-center space-x-4">
             <div>
               <h1 className="text-2xl font-light text-stone-900">NMAEI CMS</h1>
@@ -139,99 +124,61 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
                 )}
               </div>
             </div>
-            
-            {/* Global Search */}
+
+            {/* Search (optionally enable) */}
             {/* <div className="relative hidden md:block">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-stone-400" />
               <Input
-                placeholder="Search pages, projects, media..."
+                placeholder="Search..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 w-64"
               />
             </div> */}
           </div>
-          
+
+          {/* Action Buttons */}
           <div className="flex items-center space-x-3">
-            {/* Status Indicators */}
             {hasUnsavedChanges && (
               <div className="flex items-center space-x-2 text-amber-600">
-                <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></div>
-                {/* <span className="text-sm">Unsaved changes</span> */}
+                <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse" />
               </div>
             )}
-            
-            <Button
-              onClick={handlePreview}
-              variant="outline"
-              size="sm"
-              className="flex items-center gap-2"
-            >
-              <Eye className="w-4 h-4" />
-              לאתר
+
+            <Button onClick={handlePreview} variant="outline" size="sm" className="flex items-center gap-2">
+              <Eye className="w-4 h-4" /> לאתר
             </Button>
-            
+
             <Button
               onClick={handleReset}
               variant="outline"
               size="sm"
               className="flex items-center gap-2 text-orange-600 border-orange-300 hover:bg-orange-50"
             >
-              <RotateCcw className="w-4 h-4" />
-              רענון
+              <RotateCcw className="w-4 h-4" /> רענון
             </Button>
-            
-            {/* <Button
-              onClick={() => handleSave()}
-              size="sm"
-              className={`flex items-center gap-2 ${
-                hasUnsavedChanges 
-                  ? 'bg-green-600 hover:bg-green-700' 
-                  : 'bg-stone-600 hover:bg-stone-700'
-              }`}
-            >
-              <Save className="w-4 h-4" />
-              Save Changes
-            </Button> */}
-            
+
             <Button
               onClick={onLogout}
               variant="outline"
               size="sm"
               className="flex items-center gap-2 text-red-600 border-red-300 hover:bg-red-50"
             >
-              <LogOut className="w-4 h-4" />
-              יציאה
+              <LogOut className="w-4 h-4" /> יציאה
             </Button>
           </div>
         </div>
       </div>
 
+      {/* Main Area */}
       <div className="flex">
-        <AdminSidebar 
-          activeSection={activeSection} 
-          onSectionChange={setActiveSection} 
-        />
-        
+        <AdminSidebar activeSection={activeSection} onSectionChange={setActiveSection} />
         <main className="flex-1 p-6 overflow-auto">
           <div className="max-w-7xl mx-auto">
             {renderActiveSection()}
           </div>
         </main>
       </div>
-
-      {/* Floating Save Indicator */}
-      {/* {hasUnsavedChanges && (
-        <div className="fixed bottom-6 right-6 bg-amber-100 border border-amber-300 rounded-lg p-4 shadow-lg">
-          <div className="flex items-center space-x-3">
-            <div className="w-3 h-3 bg-amber-500 rounded-full animate-pulse"></div>
-            <div>
-              <p className="text-sm font-medium text-amber-800">Unsaved Changes</p>
-              <p className="text-xs text-amber-600">Press Ctrl+S to save or wait for auto-save</p>
-            </div>
-          </div>
-        </div>
-      )} */}
     </div>
   );
 };

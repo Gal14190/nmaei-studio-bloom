@@ -24,17 +24,25 @@ import { db } from '@/firebaseConfig';
 import Design from '../components/design';
 
 const Contact = () => {
-  /* ---------- state ---------- */
+  /* ---------- State ---------- */
   const [loading, setLoading] = useState(true);
   const [siteData, setSiteData] = useState<any>(null);
-  const [title, setTitle] = useState({title: "", subtitle: ""})
+  const [title, setTitle] = useState({ title: '', subtitle: '' });
 
   const [design, setDesign] = useState({
     darkColor: { backgroundColor: '#111827' },
     lightColor: { backgroundColor: '#faf9f7' },
   });
 
-  /* ---------- fetch site-wide settings + design ---------- */
+  const [formData, setFormData] = useState({
+    fullName: '',
+    phone: '',
+    email: '',
+    message: '',
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  /* ---------- Fetch Content ---------- */
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -44,43 +52,41 @@ const Contact = () => {
         ]);
 
         setDesign(designResult);
-        if (settingsSnap.exists()) setSiteData(settingsSnap.data());
-        else console.warn('settings/config not found');
+
+        if (settingsSnap.exists()) {
+          setSiteData(settingsSnap.data());
+        } else {
+          console.warn('settings/config not found');
+        }
 
         const docRef = doc(db, 'pages', 'contect');
-                const docSnap = await getDoc(docRef);
-        
-                if (docSnap.exists()) {
-                  const data = docSnap.data();
-                  const blocks = data.contentBlocks || [];
-        
-                  const title = blocks.find((b: any) => b.id === 'hero-title').content.text;
-                  const subtitle = blocks.find((b: any) => b.id === 'hero-subtitle').content.text;
-                  setTitle({title: title, subtitle: subtitle})
-                }
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          const blocks = data.contentBlocks || [];
+
+          const heroTitle = blocks.find((b: any) => b.id === 'hero-title')?.content.text || '';
+          const heroSubtitle = blocks.find((b: any) => b.id === 'hero-subtitle')?.content.text || '';
+
+          setTitle({ title: heroTitle, subtitle: heroSubtitle });
+        }
       } catch (err) {
         console.error('Error fetching site settings:', err);
       } finally {
         setLoading(false);
       }
     };
+
     fetchData();
   }, []);
 
-  /* ---------- form ---------- */
-  const [formData, setFormData] = useState({
-    fullName: '',
-    phone: '',
-    email: '',
-    message: '',
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
+  /* ---------- Handlers ---------- */
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -88,11 +94,10 @@ const Contact = () => {
     setIsSubmitting(true);
 
     try {
-      /* --- שמירת ההודעה במסד הנתונים --- */
       await addDoc(collection(db, 'contactMessages'), {
         ...formData,
         createdAt: serverTimestamp(),
-        status: 'new', // אופציונלי: לשימוש עתידי
+        status: 'new',
       });
 
       toast({
@@ -113,16 +118,13 @@ const Contact = () => {
     }
   };
 
-  /* ---------- loading ---------- */
-  if (loading || !siteData)
-    return <div className="text-center p-10"></div>;
+  /* ---------- Loading State ---------- */
+  if (loading || !siteData) return <div className="text-center p-10" />;
 
-  /* ---------- derived data ---------- */
+  /* ---------- Derived Data ---------- */
   const { contact, social } = siteData;
 
-  const whatsappNumber = contact?.whatsapp?.number || '';
-  const whatsappMessage = encodeURIComponent(contact?.whatsapp?.message || '');
-  const whatsappLink = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`;
+  const whatsappLink = `https://wa.me/${contact?.whatsapp?.number || ''}?text=${encodeURIComponent(contact?.whatsapp?.message || '')}`;
 
   const contactMethods = [
     {
@@ -193,45 +195,22 @@ const Contact = () => {
                     className="text-center group animate-fade-up"
                     style={{ animationDelay: `${i * 0.1}s` }}
                   >
-                    <div className="inline-flex items-center justify-center w-16 h-16 bg-gold-100 text-gold-600 rounded-full mb-4 group-hover:bg-gold-600 group-hover:text-white transition-colors duration-300">
-                    {m.action ? (
-                      <a
-                        href={m.action}
-                        target={m.action.startsWith('http') ? '_blank' : undefined}
-                        rel={
-                          m.action.startsWith('http')
-                            ? 'noopener noreferrer'
-                            : undefined
-                        }
-                        className="text-gray-600 transition-colors duration-300"
-                      >
-                        {m.icon}
-                      </a>
-                    ) : (
-                      m.icon
-                    )}
+                    <a
+                      href={m.action}
+                      target={m.action.startsWith('http') ? '_blank' : undefined}
+                      rel="noopener noreferrer"
+                      className="text-gray-600 hover:text-gold-600 transition-colors duration-300"
+                    >
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-gold-100 text-gold-600 rounded-full mb-4 transition-colors duration-300">
+                      {m.icon}
                     </div>
                     <h3 className="text-lg font-medium text-gray-900 mb-2">
                       {m.title}
                     </h3>
-                    {m.action ? (
-                      <a
-                        href={m.action}
-                        target={m.action.startsWith('http') ? '_blank' : undefined}
-                        rel={
-                          m.action.startsWith('http')
-                            ? 'noopener noreferrer'
-                            : undefined
-                        }
-                        className="text-gray-600 hover:text-gold-600 transition-colors duration-300"
-                      >
-                        {m.details}
-                      </a>
-                    ) : (
-                      <span className="text-gray-600">{m.details}</span>
-                    )}
+                      {m.details}
+                    </a>
                   </div>
-                ),
+                )
             )}
           </div>
         </div>
@@ -241,12 +220,10 @@ const Contact = () => {
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
-            {/* -------- FORM -------- */}
+            {/* FORM */}
             <div className="animate-fade-up">
               <div className="bg-white rounded-lg shadow-lg p-8">
-                <h2 className="text-2xl font-medium text-gray-900 mb-6">
-                  שליחת הודעה
-                </h2>
+                <h2 className="text-2xl font-medium text-gray-900 mb-6">שליחת הודעה</h2>
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
                     <Label htmlFor="fullName">שם מלא *</Label>
@@ -307,16 +284,11 @@ const Contact = () => {
               </div>
             </div>
 
-            {/* -------- INFO BLOCKS -------- */}
-            <div
-              className="space-y-8 animate-fade-up"
-              style={{ animationDelay: '0.2s' }}
-            >
+            {/* INFO */}
+            <div className="space-y-8 animate-fade-up" style={{ animationDelay: '0.2s' }}>
               {/* שעות פעילות */}
               <div className="bg-white rounded-lg shadow-lg p-8">
-                <h3 className="text-xl font-medium text-gray-900 mb-4">
-                  שעות פעילות
-                </h3>
+                <h3 className="text-xl font-medium text-gray-900 mb-4">שעות פעילות</h3>
                 <div className="space-y-2 text-gray-600">
                   {Object.entries(contact?.workingHours || {}).map(
                     ([day, { enabled, hours }]: any) =>
@@ -325,16 +297,14 @@ const Contact = () => {
                           <span>{translateDay(day)}</span>
                           <span>{hours}</span>
                         </div>
-                      ),
+                      )
                   )}
                 </div>
               </div>
 
               {/* רשתות חברתיות */}
               <div className="bg-white rounded-lg shadow-lg p-8">
-                <h3 className="text-xl font-medium text-gray-900 mb-4">
-                  עקבו אחרינו
-                </h3>
+                <h3 className="text-xl font-medium text-gray-900 mb-4">עקבו אחרינו</h3>
                 <div className="space-y-4">
                   {socialLinks.map(
                     (s, i) =>
@@ -346,26 +316,22 @@ const Contact = () => {
                           rel="noopener noreferrer"
                           className="flex items-center gap-4 text-gray-600 hover:text-gold-600 transition-colors duration-300 group"
                         >
-                          <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center group-hover:bg-gold-100 transition-colors duration-300">
+                          <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center group-hover:bg-gold-100">
                             {s.icon}
                           </div>
                           <div>
                             <div className="font-medium">{s.name}</div>
-                            <div className="text-sm text-gray-500">
-                              {s.handle}
-                            </div>
+                            <div className="text-sm text-gray-500">{s.handle}</div>
                           </div>
                         </a>
-                      ),
+                      )
                   )}
                 </div>
               </div>
 
               {/* WhatsApp CTA */}
               <div className="bg-green-50 rounded-lg p-6 border border-green-200">
-                <h3 className="text-lg font-medium text-gray-900 mb-3">
-                  צריכים ייעוץ מהיר?
-                </h3>
+                <h3 className="text-lg font-medium text-gray-900 mb-3">צריכים ייעוץ מהיר?</h3>
                 <p className="text-gray-600 mb-4">
                   שלחו לנו הודעה בוואטסאפ ונחזור אליכם תוך זמן קצר
                 </p>
@@ -392,7 +358,7 @@ const Contact = () => {
   );
 };
 
-/* ---------- helper ---------- */
+/* ---------- Helpers ---------- */
 const translateDay = (day: string): string => {
   const days: Record<string, string> = {
     sunday: 'ראשון',

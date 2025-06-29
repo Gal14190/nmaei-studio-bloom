@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Instagram, Facebook, Mail, Phone, MapPin } from 'lucide-react';
 import { doc, getDoc } from 'firebase/firestore';
-import { db } from '@/firebaseConfig'; // ודא שזו הדרך שלך לייבא את Firestore
+import { db } from '@/firebaseConfig';
 import Design from '../design';
 
 const Footer = () => {
@@ -37,7 +37,7 @@ const Footer = () => {
     fetchSiteSettings();
   }, []);
 
-  if (!siteData) return null; // או Spinner אם תרצה
+  if (!siteData) return null;
 
   const { company, contact, social } = siteData;
 
@@ -51,9 +51,9 @@ const Footer = () => {
               {company?.name || 'Studio'}
             </h3>
             <div className="text-gray-300 leading-relaxed">
-              {company?.footerTagline.split('\n').map((line: string, i: number) => (
-                 <p key={i}>{line.trim()}</p>
-                ))}
+              {(company?.footerTagline || '').split('\n').map((line: string, i: number) => (
+                <p key={i}>{line.trim()}</p>
+              ))}
             </div>
             <div className="flex space-x-4 rtl:space-x-reverse">
               {social?.instagram && (
@@ -94,30 +94,20 @@ const Footer = () => {
           <div className="space-y-4">
             <h3 className="text-lg font-medium text-cream-400">קישורים מהירים</h3>
             <nav className="space-y-2">
-              <Link
-                to="/projects"
-                className="block text-gray-300 hover:text-cream-400 transition-colors duration-300"
-              >
-                פרויקטים
-              </Link>
-              <Link
-                to="/about"
-                className="block text-gray-300 hover:text-cream-400 transition-colors duration-300"
-              >
-                אודות
-              </Link>
-              <Link
-                to="/services"
-                className="block text-gray-300 hover:text-cream-400 transition-colors duration-300"
-              >
-                שירותים
-              </Link>
-              <Link
-                to="/contact"
-                className="block text-gray-300 hover:text-cream-400 transition-colors duration-300"
-              >
-                צור קשר
-              </Link>
+              {[
+                { label: 'פרויקטים', path: '/projects' },
+                { label: 'אודות', path: '/about' },
+                { label: 'שירותים', path: '/services' },
+                { label: 'צור קשר', path: '/contact' },
+              ].map((link, i) => (
+                <Link
+                  key={i}
+                  to={link.path}
+                  className="block text-gray-300 hover:text-cream-400 transition-colors duration-300"
+                >
+                  {link.label}
+                </Link>
+              ))}
             </nav>
           </div>
 
@@ -140,7 +130,10 @@ const Footer = () => {
               {contact?.address && (
                 <div className="flex items-start space-x-3 rtl:space-x-reverse">
                   <MapPin size={18} className="text-cream-400 mt-1" />
-                  <span className="text-gray-300" style={{ whiteSpace: 'pre-line' }}>
+                  <span
+                    className="text-gray-300"
+                    style={{ whiteSpace: 'pre-line' }}
+                  >
                     {contact.address}
                   </span>
                 </div>

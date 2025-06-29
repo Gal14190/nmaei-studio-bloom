@@ -1,11 +1,23 @@
+import React, { useState } from 'react';
+import { 
+  Button 
+} from '@/components/ui/button';
+import { 
+  Input 
+} from '@/components/ui/input';
+import { 
+  Card, CardContent, CardHeader, CardTitle 
+} from '@/components/ui/card';
+import { 
+  Tabs, TabsContent, TabsList, TabsTrigger 
+} from '@/components/ui/tabs';
+import { 
+  Badge 
+} from '@/components/ui/badge';
+import {
+  Search, Edit, Eye, Lock, Plus, FileText, Home, Info, Briefcase, Phone
+} from 'lucide-react';
 
-import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { Search, Edit, Eye, Lock, Plus, FileText, Home, Info, Briefcase, Phone } from 'lucide-react';
 import ContentEditor from './ContentEditor';
 import About from '@/pages/About';
 
@@ -55,16 +67,14 @@ const ContentManager = ({ onContentChange }: ContentManagerProps) => {
       id: 'service',
       name: 'עמוד שירות',
       icon: <Info className="w-4 h-4" />,
-      sections: [
-      ]
+      sections: []
     },
     {
       id: 'contect',
       name: 'עמוד צור קשר',
       icon: <Phone className="w-4 h-4" />,
-      sections: [
-      ]
-    },
+      sections: []
+    }
   ];
 
   const filteredPages = pages.filter(page => 
@@ -81,7 +91,8 @@ const ContentManager = ({ onContentChange }: ContentManagerProps) => {
           <h2 className="text-2xl font-light text-stone-900">עריכת תוכן אתר</h2>
           <p className="text-stone-600">עריכת כל תוכן האתר</p>
         </div>
-        {/* <div className="flex items-center space-x-3">
+        {/* 
+        <div className="flex items-center space-x-3">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-stone-400" />
             <Input
@@ -95,11 +106,12 @@ const ContentManager = ({ onContentChange }: ContentManagerProps) => {
             <Plus className="w-4 h-4 mr-2" />
             Add Section
           </Button>
-        </div> */}
+        </div>
+        */}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Enhanced Sidebar - Page List */}
+        {/* Sidebar - Page List */}
         <div className="lg:col-span-1">
           <Card>
             <CardHeader>
@@ -164,7 +176,8 @@ const ContentManager = ({ onContentChange }: ContentManagerProps) => {
                   {pages.find(p => p.id === activePageId)?.icon}
                   עריכה: {pages.find(p => p.id === activePageId)?.name}
                 </CardTitle>
-                {/* <div className="flex space-x-2">
+                {/* 
+                <div className="flex space-x-2">
                   <Button variant="outline" size="sm">
                     <Eye className="w-4 h-4 mr-2" />
                     Preview
@@ -172,11 +185,10 @@ const ContentManager = ({ onContentChange }: ContentManagerProps) => {
                   <Button size="sm" className="bg-green-600 hover:bg-green-700">
                     Save Changes
                   </Button>
-                </div> */}
+                </div>
+                */}
               </div>
-              <div className="text-sm text-stone-600">
-                עריכת העמוד
-              </div>
+              <div className="text-sm text-stone-600">עריכת העמוד</div>
             </CardHeader>
             <CardContent>
               <ContentEditor 

@@ -449,8 +449,8 @@ const ContentEditor = ({ pageId, onContentChange }: ContentEditorProps) => {
           const data = docSnap.data();
           setContentBlocks(data.contentBlocks || []);
           toast({
-            title: 'Loaded from Firestore',
-            description: 'Content loaded successfully',
+            title: 'טעינת נתונים',
+            description: 'הנתונים הוטענו בהצלחה',
           });
         } else {
           const defaults = getContentBlocksForPage(pageId);
