@@ -618,7 +618,7 @@ const ContentEditor = ({ pageId, onContentChange }: ContentEditorProps) => {
                 updateBlock(block.id, { ...block.content, projects: updated });
               }}
               placeholder="כתובת תמונה"
-              disabled
+              // disabled
             />
           </div>
         ))}
