@@ -81,6 +81,16 @@ const defaultSettings = {
     rtl: true,
   },
 };
+export const orderedDays = [
+  { key: 'sunday', label: 'ראשון' },
+  { key: 'monday', label: 'שני' },
+  { key: 'tuesday', label: 'שלישי' },
+  { key: 'wednesday', label: 'רביעי' },
+  { key: 'thursday', label: 'חמישי' },
+  { key: 'friday', label: 'שישי' },
+  { key: 'saturday', label: 'שבת' },
+];
+
 
 /* ---------- קומפוננטה ---------- */
 const SiteWideSettings = ({ onContentChange }: SiteWideSettingsProps) => {
@@ -297,6 +307,44 @@ const SiteWideSettings = ({ onContentChange }: SiteWideSettingsProps) => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
+                {orderedDays.map(({ key, label }) => {
+                  const cfg = settings.contact.workingHours[key];
+
+                  return (
+                    <div key={key} className="flex items-center justify-between gap-4">
+                      <div className="flex items-center gap-3 w-56">
+                        <Switch
+                          checked={cfg.enabled}
+                          onCheckedChange={(checked) =>
+                            handleSettingChange(
+                              'contact',
+                              'workingHours',
+                              { ...cfg, enabled: checked },
+                              key
+                            )
+                          }
+                        />
+                        <span className="capitalize">{label}</span>
+                      </div>
+                      <Input
+                        className="w-40"
+                        disabled={!cfg.enabled}
+                        value={cfg.hours}
+                        onChange={(e) =>
+                          handleSettingChange(
+                            'contact',
+                            'workingHours',
+                            { ...cfg, hours: e.target.value },
+                            key
+                          )
+                        }
+                      />
+                    </div>
+                  );
+                })}
+              </CardContent>
+
+            {/* <CardContent className="space-y-3">
               {Object.entries(settings.contact.workingHours).map(
                 ([day, cfg]: any) => (
                   <div
@@ -333,7 +381,7 @@ const SiteWideSettings = ({ onContentChange }: SiteWideSettingsProps) => {
                   </div>
                 )
               )}
-            </CardContent>
+            </CardContent> */}
           </Card>
         </TabsContent>
 

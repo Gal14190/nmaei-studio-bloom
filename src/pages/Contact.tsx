@@ -22,6 +22,8 @@ import {
 } from 'firebase/firestore';
 import { db } from '@/firebaseConfig';
 import Design from '../components/design';
+import { orderedDays } from '@/components/Admin/SiteWideSettings';
+
 
 const Contact = () => {
   /* ---------- State ---------- */
@@ -287,7 +289,7 @@ const Contact = () => {
             {/* INFO */}
             <div className="space-y-8 animate-fade-up" style={{ animationDelay: '0.2s' }}>
               {/* שעות פעילות */}
-              <div className="bg-white rounded-lg shadow-lg p-8">
+              {/* <div className="bg-white rounded-lg shadow-lg p-8">
                 <h3 className="text-xl font-medium text-gray-900 mb-4">שעות פעילות</h3>
                 <div className="space-y-2 text-gray-600">
                   {Object.entries(contact?.workingHours || {}).map(
@@ -300,7 +302,26 @@ const Contact = () => {
                       )
                   )}
                 </div>
-              </div>
+              </div> */}
+              {<div className="bg-white rounded-lg shadow-lg p-8">
+                <h3 className="text-xl font-medium text-gray-900 mb-4">שעות פעילות</h3>
+                <div className="space-y-2 text-gray-600">
+                  {orderedDays.map(({key , label}) => {
+                    const item = contact?.workingHours?.[key];
+                    return (
+                      item?.enabled && (
+                        <div key={key} className="flex justify-between">
+                          <span>{label}</span>
+                          <span>{item.hours}</span>
+                        </div>
+                        )
+                      );
+                    })}
+
+                </div>
+              </div>}              
+              
+
 
               {/* רשתות חברתיות */}
               <div className="bg-white rounded-lg shadow-lg p-8">
