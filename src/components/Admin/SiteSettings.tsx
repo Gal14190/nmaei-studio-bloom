@@ -42,7 +42,7 @@ const SiteSettings = ({ onContentChange }: SiteSettingsProps) => {
       facebook: 'https://facebook.com/nmaei.studio',
     },
     company: {
-      name: 'NMAEI Studio',
+      name: 'M I N É A Studio',
       tagline: 'Architecture | Interior Design',
       address: 'אזור המרכז, ישראל',
       description: 'סטודיו לאדריכלות ועיצוב פנים - תכנון חכם, עיצוב מינימליסטי וחם',

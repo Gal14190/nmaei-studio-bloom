@@ -269,7 +269,7 @@ const ContentEditor = ({ pageId, onContentChange }: ContentEditorProps) => {
                 {
                   icon: 'ללא',
                   title: 'ייסוד הסטודיו',
-                  description: 'הקמת סטודיו NMAEI ותחילת עבודה עצמאית עם לקוחות פרטיים',
+                  description: 'הקמת סטודיו M I N É A ותחילת עבודה עצמאית עם לקוחות פרטיים',
                 },
                 {
                   icon: 'ללא',

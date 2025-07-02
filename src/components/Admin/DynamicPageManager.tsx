@@ -44,7 +44,7 @@ const DynamicPageManager = ({ onContentChange }: DynamicPageManagerProps) => {
       slug: '/',
       template: 'hero-template',
       published: true,
-      seoTitle: 'NMAEI Studio - Architecture & Interior Design',
+      seoTitle: 'M I N É A Studio - Architecture & Interior Design',
       seoDescription: 'Professional architecture and interior design studio',
       featuredImage: '/lovable-uploads/0a45c4d2-657f-4646-99b2-d0f432254035.png',
       content: {
@@ -64,7 +64,7 @@ const DynamicPageManager = ({ onContentChange }: DynamicPageManagerProps) => {
       slug: '/about',
       template: 'content-template',
       published: true,
-      seoTitle: 'About NMAEI Studio',
+      seoTitle: 'About M I N É A Studio',
       seoDescription: 'Learn about our professional journey and design philosophy',
       featuredImage: '/lovable-uploads/abb71ea3-eb84-4ef8-bc2a-169b6f172cd7.png',
       content: {
@@ -74,7 +74,7 @@ const DynamicPageManager = ({ onContentChange }: DynamicPageManagerProps) => {
         },
         timeline: {
           title: 'המסע המקצועי',
-          description: 'הדרך שהובילה להקמת סטודיו NMAEI',
+          description: 'הדרך שהובילה להקמת סטודיו M I N É A',
           items: [
             {
               year: '2021',
@@ -89,7 +89,7 @@ const DynamicPageManager = ({ onContentChange }: DynamicPageManagerProps) => {
             {
               year: '2023',
               title: 'ייסוד הסטודיו',
-              description: 'הקמת סטודיו NMAEI ותחילת עבודה עצמאית עם לקוחות פרטיים'
+              description: 'הקמת סטודיו M I N É A ותחילת עבודה עצמאית עם לקוחות פרטיים'
             },
             {
               year: '2024',

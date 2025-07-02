@@ -53,7 +53,7 @@ const defaultSettings = {
     youtube: '',
   },
   company: {
-    name: 'NMAEI Studio',
+    name: 'M I N É A Studio',
     tagline: 'Architecture | Interior Design',
     footerTagline:
       'סטודיו לאדריכלות ועיצוב פנים - תכנון חכם, עיצוב מינימליסטי וחם',
@@ -70,7 +70,7 @@ const defaultSettings = {
     footerContact: { text: 'בואו נדבר', link: '/contact', style: 'outline' },
   },
   seo: {
-    defaultTitle: 'NMAEI Studio - Architecture & Interior Design',
+    defaultTitle: 'M I N É A Studio - Architecture & Interior Design',
     defaultDescription: 'סטודיו מקצועי לאדריכלות ועיצוב פנים במרכז הארץ',
     ogImage: '/lovable-uploads/f911b76f-cd03-4ecc-ace0-40a934fa63db.png',
     favicon: '/favicon.ico',

@@ -11,14 +11,14 @@ interface PageEditorProps {
 
 const PageEditor = ({ onContentChange }: PageEditorProps) => {
   const [pages] = useState([
-    { id: 'home', name: 'Home Page', content: 'Welcome to NMAEI Studio...' },
+    { id: 'home', name: 'Home Page', content: 'Welcome to M I N É A Studio...' },
     { id: 'about', name: 'About Page', content: 'Our story begins...' },
     { id: 'contact', name: 'Contact Page', content: 'Get in touch with us...' },
   ]);
 
   const [activeEditor, setActiveEditor] = useState<string | null>(null);
   const [pageContents, setPageContents] = useState<Record<string, string>>({
-    home: 'Welcome to NMAEI Studio - where architecture meets emotion...',
+    home: 'Welcome to M I N É A Studio - where architecture meets emotion...',
     about: 'Our story begins with a passion for creating spaces that inspire...',
     contact: 'Get in touch with us to discuss your next project...',
   });

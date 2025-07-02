@@ -21,23 +21,23 @@ const EnhancedPageEditor = ({ onContentChange }: EnhancedPageEditorProps) => {
     { 
       id: 'home', 
       name: 'Home Page', 
-      content: 'Welcome to NMAEI Studio...',
+      content: 'Welcome to M I N É A Studio...',
       published: true,
-      seo: { title: 'NMAEI Studio - Architecture & Interior Design', description: 'Welcome to our studio', slug: 'home' }
+      seo: { title: 'M I N É A Studio - Architecture & Interior Design', description: 'Welcome to our studio', slug: 'home' }
     },
     { 
       id: 'about', 
       name: 'About Page', 
       content: 'Our story begins...',
       published: true,
-      seo: { title: 'About Us - NMAEI Studio', description: 'Learn about our story', slug: 'about' }
+      seo: { title: 'About Us - M I N É A Studio', description: 'Learn about our story', slug: 'about' }
     },
     { 
       id: 'contact', 
       name: 'Contact Page', 
       content: 'Get in touch with us...',
       published: false,
-      seo: { title: 'Contact - NMAEI Studio', description: 'Get in touch with us', slug: 'contact' }
+      seo: { title: 'Contact - M I N É A Studio', description: 'Get in touch with us', slug: 'contact' }
     },
   ]);
 
